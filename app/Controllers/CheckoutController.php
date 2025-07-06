@@ -1,9 +1,9 @@
-<?php namespace App\Controllers\User;
+<?php namespace App\Controllers; // Changed from App\Controllers\User
 // Changed namespace from just App\Controllers
 
 use App\Controllers\BaseController;
-use App\Models\Order;
-use App\Models\OrderItem;
+use App\Models\Order; // Assuming App\Models\Order exists
+use App\Models\OrderItem; // Assuming App\Models\OrderItem exists
 use Config\Services;
 
 // Added BaseController import
@@ -16,11 +16,37 @@ class CheckoutController extends BaseController // Extends BaseController
 
     private function getCartSummary(): array
     {
-        $cart = Services::cart(); // Using CI4 Cart service
-        $items = $cart->contents();
-        $subtotal = array_reduce($items, fn($sum, $i) => $sum + ($i['price'] * $i['qty']), 0);
-        $shipping = 10.00;           // flat rate, for example
-        $tax = $subtotal * 0.08; // 8%
+        // Directly get the raw cart items (product_id => quantity) from the session
+        $rawCart = session()->get('cart') ?? [];
+        $items = [];
+        $subtotal = 0;
+
+        // Instantiate ProductModel to get product details for each item
+        $productModel = new \App\Models\ProductModel(); // Added a leading backslash \ to ensure global namespace lookup // Ensure this is accessible via a 'use' statement or fully qualified
+
+        foreach ($rawCart as $productId => $quantity) {
+            $product = $productModel->find($productId);
+            if ($product) {
+                $itemPrice = $product['price'];
+                $itemSubtotal = $itemPrice * $quantity;
+
+                // Build the item array with necessary details for the summary
+                $items[] = [
+                    'id'    => $productId,
+                    'name'  => $product['name'],
+                    'qty'   => $quantity,
+                    'price' => $itemPrice,
+                    'itemTotal' => $itemSubtotal,
+                    'thumb' => 'public/assets/img/' . $product['image'], // Path for product image thumbnail in view
+                    'options' => [], // Placeholder: populate if product options are stored in the cart
+                ];
+                $subtotal += $itemSubtotal; // Accumulate subtotal
+            }
+        }
+
+        // Calculate shipping, tax, and total based on the reconstructed cart items
+        $shipping = 10.00;           // Example flat rate (adjust as per your logic)
+        $tax = $subtotal * 0.08; // Example 8% tax (adjust as per your logic)
         $total = $subtotal + $shipping + $tax;
 
         return compact('items', 'subtotal', 'shipping', 'tax', 'total');

@@ -1,11 +1,9 @@
-<?php namespace App\Controllers\User;
+<?php namespace App\Controllers; // Changed from App\Controllers\User
 
 use App\Controllers\BaseController;
 use App\Models\ProductModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use Config\Services;
-
-// Don't forget to define/create this model
 
 class CartController extends BaseController
 {
@@ -46,7 +44,7 @@ class CartController extends BaseController
             'total' => $total,
         ];
 
-        return view('Cart/index', $data); // THIS IS THE LINE THAT RENDERS THE VIEW
+        return view('Cart/cart', $data); // Load 'Cart/cart.php' instead
     }
 
     public function add()

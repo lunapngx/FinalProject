@@ -24,22 +24,22 @@ $routes->get('about', 'Home::about', ['as' => 'about']);
 $routes->get('categories', 'Home::categories', ['as' => 'categories_list']); // Route to list all categories if Home::categories handles it
 
 // Product Routes
-$routes->get('product', 'User\ProductController::index', ['as' => 'products_list']);
-$routes->get('product/(:num)', 'User\ProductController::show/$1', ['as' => 'product_detail']); // View single product
-$routes->get('category/(:segment)', 'User\CategoryController::view/$1', ['as' => 'products_by_category_slug']); // View products by category slug
+$routes->get('product', 'ProductController::index', ['as' => 'products_list']); // Removed User\
+$routes->get('product/(:num)', 'ProductController::show/$1', ['as' => 'product_detail']); // Removed User\
+$routes->get('category/(:segment)', 'CategoryController::view/$1', ['as' => 'products_by_category_slug']); // Removed User\
 
-// Cart Routes
-$routes->get('cart', 'User\CartController::index', ['as' => 'cart_view']);
-$routes->post('cart/add', 'User\CartController::add', ['as' => 'cart_add']);
-$routes->post('cart/update', 'User\CartController::update', ['as' => 'cart_update']);
-$routes->post('cart/remove', 'User\CartController::remove', ['as' => 'cart_remove']);
+// Cart Routes (already fixed in previous turn)
+$routes->get('cart', 'CartController::index', ['as' => 'cart_view']);
+$routes->post('cart/add', 'CartController::add', ['as' => 'cart_add']);
+$routes->post('cart/update', 'CartController::update', ['as' => 'cart_update']);
+$routes->post('cart/remove', 'CartController::remove', ['as' => 'cart_remove']);
 
 // Checkout Routes
-$routes->get('checkout', 'User\CheckoutController::index', ['as' => 'checkout_view']);
-$routes->post('checkout', 'User\CheckoutController::process', ['as' => 'checkout_process']); // Changed from checkout/process
+$routes->get('checkout', 'CheckoutController::index', ['as' => 'checkout_view']); // Removed User\
+$routes->post('checkout', 'CheckoutController::process', ['as' => 'checkout_process']); // Removed User\
 
 // Order Routes
-$routes->post('order/place', 'User\OrderController::place', ['as' => 'order_place']);
+$routes->post('order/place', 'OrderController::place', ['as' => 'order_place']); // Removed User\
 
 // Admin Group Routes (apply 'group:admin' filter, assuming you have Shield or custom group checking)
 $routes->group('admin', ['filter' => 'group:admin'], function ($routes) {

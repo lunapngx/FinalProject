@@ -1,9 +1,9 @@
-<?php namespace App\Controllers\User;
+<?php namespace App\Controllers; // Changed from App\Controllers\User
 // Changed namespace
 
 use App\Controllers\BaseController;
-use App\Models\Order;
-use App\Models\OrderItem;
+use App\Models\Order; // Assuming App\Models\Order exists
+use App\Models\OrderItem; // Assuming App\Models\OrderItem exists
 use App\Models\ProductModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use Config\Services;
@@ -73,8 +73,7 @@ class OrderController extends BaseController // Extends BaseController
         ];
 
         // This would require capturing more user details in the form for a complete order
-        // For now, we'll make some assumptions or skip strict validation if the form doesn't provide it
-        // If the form truly only has product_id, color, size, then the above shipping/user info is missing.
+        // For now, we'll make some assumptions or skip strict validation if the form doesn't provide it.
         // It's better to redirect to a checkout page for full details.
 
         // For now, save with basic data, but note this is incomplete for a real system

@@ -1,13 +1,13 @@
-<?php namespace App\Controllers\User;
+<?php namespace App\Controllers; // Changed from App\Controllers\User
 
 use App\Models\CategoryModel;
 use App\Models\ProductModel;
-use CodeIgniter\Controller;
+use CodeIgniter\Controller; // Should be BaseController if extending it directly
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 // Changed to CategoryModel
 
-class CategoryController extends Controller
+class CategoryController extends BaseController // Assuming you want to extend BaseController
 {
     public function view(string $slug)
     {
