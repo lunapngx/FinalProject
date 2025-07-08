@@ -12210,3 +12210,41 @@ section,
   width: auto; /* Maintain aspect ratio */
   /* You might also use max-height: 60px; for flexibility */
 }
+
+
+.checkout-container {
+  display: flex; /* Enables flexbox layout */
+  gap: 30px; /* Adds space between the columns */
+  flex-wrap: wrap; /* Allows columns to wrap onto the next line on smaller screens */
+}
+
+.checkout-container .left {
+  flex: 1; /* Allows the left column to grow and shrink */
+  min-width: 300px; /* Ensures a minimum width before wrapping */
+}
+
+.checkout-container .right.order-summary {
+  flex: 0 0 350px; /* Sets a fixed width for the order summary on larger screens */
+  /* Maintain existing sticky position if needed, it's already in main.css */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 991.98px) {
+  .checkout-container {
+    flex-direction: column; /* Stacks columns vertically on screens smaller than 992px */
+    gap: 20px; /* Adjust gap for stacked layout */
+  }
+
+  .checkout-container .left,
+  .checkout-container .right.order-summary {
+    flex: none; /* Remove flex sizing when stacked */
+    width: 100%; /* Make them take full width */
+    max-width: 100%; /* Ensure they don't exceed parent width */
+  }
+
+  .checkout-container .right.order-summary {
+    position: relative; /* Remove sticky position when stacked on smaller screens */
+    top: auto;
+    margin-top: 2rem; /* Add some top margin when stacked */
+  }
+}
