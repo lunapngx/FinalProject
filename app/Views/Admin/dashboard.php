@@ -4,7 +4,8 @@
 
 <?= $this->section('styles') ?>
     <link rel="stylesheet" href="<?= base_url('public/assets/css/main.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('public/assets/css/admin.css') ?>"> <?= $this->endSection() ?>
+    <link rel="stylesheet" href="<?= base_url('public/assets/css/admin.css') ?>">
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
     <div class="container admin-dashboard-page">
@@ -12,10 +13,10 @@
             <div class="container d-flex justify-content-center">
                 <ul class="nav nav-pills">
                     <li class="nav-item"><a class="nav-link active" href="<?= url_to('admin_dashboard') ?>">HOME</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">PRODUCTS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">ORDERS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">CUSTOMERS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">SALES REPORT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_products') ?>">PRODUCTS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_orders') ?>">ORDERS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_sales_report') ?>">SALES REPORT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_account') ?>">ADMIN ACCOUNT</a></li>
                 </ul>
             </div>
         </div>

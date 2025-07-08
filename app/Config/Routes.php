@@ -43,11 +43,14 @@ $routes->post('order/place', 'OrderController::place', ['as' => 'order_place']);
 
 // Admin Group Routes (apply 'group:admin' filter, assuming you have Shield or custom group checking)
 $routes->group('admin', ['filter' => 'group:admin'], function ($routes) {
-    $routes->get('/', 'AdminDashboard::index', ['as' => 'admin_dashboard']); // Correctly points to AdminDashboard // Dashboard controller is at App\Controllers\Dashboard
-    $routes->resource('products', ['controller' => 'Admin\Product']); // CRUD for products (Admin\Product controller)
-    $routes->resource('categories', ['controller' => 'Admin\Category']); // CRUD for categories (Admin\Category controller)
-    $routes->resource('orders', ['controller' => 'Admin\Order']); // Manage orders (Admin\Order controller)
-    // ... more admin routes
+    $routes->get('/', 'AdminDashboard::index', ['as' => 'admin_dashboard']);
+    $routes->get('products', 'AdminDashboard::products', ['as' => 'admin_products']);
+    $routes->match(['get', 'post'], 'add-product', 'AdminDashboard::addProduct', ['as' => 'admin_add_product']);
+    $routes->match(['get', 'post'], 'edit-product/(:num)', 'AdminDashboard::editProduct/$1', ['as' => 'admin_edit_product']);
+    $routes->get('delete-product/(:num)', 'AdminDashboard::deleteProduct/$1', ['as' => 'admin_delete_product']);
+    $routes->get('orders', 'AdminDashboard::orders', ['as' => 'admin_orders']);
+    $routes->get('sales-report', 'AdminDashboard::salesReport', ['as' => 'admin_sales_report']);
+    $routes->get('account', 'AdminDashboard::account', ['as' => 'admin_account']);
 });
 
 // User Account Routes (apply 'session' filter for logged-in users)
