@@ -43,7 +43,7 @@ $routes->post('order/place', 'OrderController::place', ['as' => 'order_place']);
 
 // Admin Group Routes (apply 'group:admin' filter, assuming you have Shield or custom group checking)
 $routes->group('admin', ['filter' => 'group:admin'], function ($routes) {
-    $routes->get('/', 'AdminDashboard::index', ['as' => 'admin_dashboard']);
+    $routes->get('/', 'AdminDashboard::dashboard', ['as' => 'admin_dashboard']);
     $routes->get('products', 'AdminDashboard::products', ['as' => 'admin_products']);
     $routes->match(['get', 'post'], 'add-product', 'AdminDashboard::addProduct', ['as' => 'admin_add_product']);
     $routes->match(['get', 'post'], 'edit-product/(:num)', 'AdminDashboard::editProduct/$1', ['as' => 'admin_edit_product']);
