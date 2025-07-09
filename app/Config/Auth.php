@@ -29,16 +29,27 @@ use CodeIgniter\Shield\Models\UserModel;
 
 class Auth extends ShieldAuth
 {
-    /**
-     * ////////////////////////////////////////////////////////////////////
-     * AUTHENTICATION
-     * ////////////////////////////////////////////////////////////////////
-     */
+    // ... (other properties)
 
-    // Constants for Record Login Attempts. Do not change.
-    public const RECORD_LOGIN_ATTEMPT_NONE    = 0; // Do not record at all
-    public const RECORD_LOGIN_ATTEMPT_FAILURE = 1; // Record only failures
-    public const RECORD_LOGIN_ATTEMPT_ALL     = 2; // Record all login attempts
+    /**
+     * Returns the URL that a user should be redirected
+     * to after a successful login.
+     */
+    public function loginRedirect(): string
+    {
+        $session = session();
+
+        // Check if the user is an admin
+        if ($session->get('role') === 'admin') {
+            return $this->getUrl(setting('Auth.redirects')['admin_dashboard'] ?? '/admin');
+        }
+
+        $url = $session->getTempdata('beforeLoginUrl') ?? setting('Auth.redirects')['login'];
+
+        return $this->getUrl($url);
+    }
+
+    // ... (rest of the file)
 
     /**
      * --------------------------------------------------------------------

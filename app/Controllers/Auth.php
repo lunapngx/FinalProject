@@ -7,34 +7,37 @@ use App\Models\UserModel;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use Exception;
 
-// Ensure this is imported
-
 class Auth extends BaseController
 {
     public function login()
     {
-        // Capture the redirect URL before processing
-        $data['redirect'] = $this->request->getGet('redirect') ?? '/'; // Default redirect to home
-
         if ($this->request->getMethod() === 'post') {
-            $email = $this->request->getPost('email');
-            $password = $this->request->getPost('password');
+            $model = new UserModel();
+            $user = $model->where('email', $this->request->getPost('email'))->first();
 
-            $userModel = new UserModel();
-            $user = $userModel->where('email', $email)->first();
+            // Verify password and user existence
+            if ($user && password_verify($this->request->getPost('password'), $user['password'])) {
+                $session = session();
+                $session->set([
+                    'id' => $user['id'],
+                    'role' => $user['role'],
+                    'isLoggedIn' => true,
+                ]);
 
-            if ($user && password_verify($password, $user['password_hash'])) {
-                // User is authenticated
-                session()->set('user_id', $user['id']);
-                session()->setFlashdata('success', 'You have been successfully logged in.');
-
-                // Redirect to the stored URL or default
-                return redirect()->to($data['redirect']);
+                // Redirect based on user role
+                if ($user['role'] === 'admin') {
+                    // Correct: Redirect to the named admin route
+                    return redirect()->to(url_to('admin_dashboard'));
+                } else {
+                    // Correct: Redirect to the user's view
+                    return redirect()->to('/user/dashboard');
+                }
             } else {
-                $data['error'] = 'Invalid email or password.';
+                return redirect()->to('/login')->with('error', 'Invalid credentials');
             }
         }
-        return view('Auth/login', $data); // Assuming Auth/login view exists
+
+        return view('auth/login');
     }
 
     public function register()
@@ -44,9 +47,9 @@ class Auth extends BaseController
             $pass  = $this->request->getPost('password');
             $confirmPass = $this->request->getPost('confirm_password');
 
-            $data = []; // Initialize data array for view
+            $data = [];
 
-            // Basic validation
+            // Validation
             if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $data['error'] = 'Invalid email address format.';
             } elseif (strlen($pass) < 6) {
@@ -62,7 +65,7 @@ class Auth extends BaseController
                     ]);
                     session()->set('user_id', $userModel->getInsertID());
                     session()->setFlashdata('success', 'Registration successful! You are now logged in.');
-                    return redirect()->to('/'); // Redirect to home or a welcome page
+                    return redirect()->to('/');
                 } catch (DatabaseException $e) {
                     if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
                         $data['error'] = 'This email address is already registered.';
@@ -74,13 +77,12 @@ class Auth extends BaseController
                 }
             }
         }
-        return view('Auth/register', $data ?? []); // Assuming Auth/register view exists
+        return view('Auth/register', $data ?? []);
     }
 
     public function logout()
     {
         session()->destroy();
-        session()->setFlashdata('success', 'You have been successfully logged out.');
-        return redirect()->to(url_to('login')); // Redirect to login page
+        return redirect()->to('/login');
     }
 }

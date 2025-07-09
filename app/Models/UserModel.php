@@ -1,35 +1,41 @@
-<?php namespace App\Models;
+<?php
+
+namespace App\Models;
 
 use CodeIgniter\Model;
 
 class UserModel extends Model
 {
-    protected $table      = 'users'; // Your users table name
+    protected $table = 'users';
     protected $primaryKey = 'id';
 
     protected $useAutoIncrement = true;
 
-    protected $returnType     = 'array'; // Or 'object' if you prefer objects
-    protected $useSoftDeletes = false; // Set to true if you implement soft deletes
+    protected $returnType = 'array';
+    protected $useSoftDeletes = true; // Your migration has 'deleted_at', so this should be true
 
-    // These fields must match the columns in your 'users' database table
+    // Make sure these fields match your database columns
     protected $allowedFields = [
+        'username',
         'email',
-        'password_hash',
-        // Add any other user-related fields here, like 'username', 'first_name', 'last_name', etc.
-        // For Shield users, 'username' might be managed differently.
+        'password', // Corrected from password_hash
+        'role',     // Added role
+        'status',
+        'active',
+        'fullname',
+        'last_active',
     ];
 
     // Dates
-    protected $useTimestamps = true; // Assuming your users table has created_at and updated_at
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at'; // If you use soft deletes
+    protected $useTimestamps = true;
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'created_at';
+    protected $updatedField = 'updated_at';
+    protected $deletedField = 'deleted_at';
 
-    // Validation (add rules as needed for user registration/updates)
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
-    protected $skipValidation       = false;
+    // Validation
+    protected $validationRules = [];
+    protected $validationMessages = [];
+    protected $skipValidation = false;
     protected $cleanValidationRules = true;
 }

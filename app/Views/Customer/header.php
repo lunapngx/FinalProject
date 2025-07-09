@@ -67,7 +67,7 @@
                             <<div class="dropdown-footer">
                                 <?php if (auth()->loggedIn()): ?>
                                     <?php if (auth()->user() && auth()->user()->inGroup('admin')): // Check if user is in 'admin' group ?>
-                                        <a href="<?= url_to('admin_dashboard') ?>" class="btn btn-warning w-100 mb-2">Admin Dashboard</a>
+                                        <a href="/admin/home" class="btn btn-warning w-100 mb-2">Admin Dashboard</a>
                                     <?php endif; ?>
                                     <a href="<?= url_to('logout') ?>" class="btn btn-outline-danger w-100">Logout</a>
                                 <?php else: ?>

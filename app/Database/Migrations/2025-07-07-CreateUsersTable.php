@@ -26,6 +26,15 @@ class CreateUsersTable extends Migration
                 'constraint' => '255',
                 'unique'     => true,
             ],
+            'password' => [ // Make sure to add password if it's missing!
+                'type'       => 'VARCHAR',
+                'constraint' => '255',
+            ],
+            'role' => [ // This is the new column
+                'type'       => 'VARCHAR',
+                'constraint' => '50',
+                'default'    => 'user',
+            ],
             'status' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '255',
@@ -36,7 +45,7 @@ class CreateUsersTable extends Migration
                 'constraint' => 1,
                 'default'    => 1,
             ],
-            'fullname' => [ // optional extra field
+            'fullname' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '255',
                 'null'       => true,

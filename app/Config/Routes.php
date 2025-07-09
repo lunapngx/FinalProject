@@ -41,17 +41,27 @@ $routes->post('checkout', 'CheckoutController::process', ['as' => 'checkout_proc
 // Order Routes
 $routes->post('order/place', 'OrderController::place', ['as' => 'order_place']); // Removed User\
 
-// Admin Group Routes (apply 'group:admin' filter, assuming you have Shield or custom group checking)
-$routes->group('admin', ['filter' => 'group:admin'], function ($routes) {
-    $routes->get('/', 'AdminDashboard::dashboard', ['as' => 'admin_dashboard']);
-    $routes->get('products', 'AdminDashboard::products', ['as' => 'admin_products']);
-    $routes->match(['get', 'post'], 'add-product', 'AdminDashboard::addProduct', ['as' => 'admin_add_product']);
-    $routes->match(['get', 'post'], 'edit-product/(:num)', 'AdminDashboard::editProduct/$1', ['as' => 'admin_edit_product']);
-    $routes->get('delete-product/(:num)', 'AdminDashboard::deleteProduct/$1', ['as' => 'admin_delete_product']);
-    $routes->get('orders', 'AdminDashboard::orders', ['as' => 'admin_orders']);
-    $routes->get('sales-report', 'AdminDashboard::salesReport', ['as' => 'admin_sales_report']);
-    $routes->get('account', 'AdminDashboard::account', ['as' => 'admin_account']);
+// app/Config/Routes.php
+
+$routes->group('admin', ['filter' => 'group:admin,superadmin'], static function ($routes) {
+    // Make sure 'as' => 'admin.dashboard' is present
+    $routes->get('dashboard', 'AdminController::dashboard', ['as' => 'admin.dashboard']);
 });
+
+$routes->group('user', ['filter' => 'auth:user'], function ($routes) {
+    $routes->get('index', 'UserController::dashboard');
+});
+// Admin Group Routes (apply 'group:admin' filter, assuming you have Shield or custom group checking)
+//$routes->group('admin', ['filter' => 'group:admin'], function ($routes) {
+//    $routes->get('/', 'AdminDashboard::dashboard', ['as' => 'admin_dashboard']);
+//    $routes->get('products', 'AdminDashboard::products', ['as' => 'admin_products']);
+//    $routes->match(['get', 'post'], 'add-product', 'AdminDashboard::addProduct', ['as' => 'admin_add_product']);
+//    $routes->match(['get', 'post'], 'edit-product/(:num)', 'AdminDashboard::editProduct/$1', ['as' => 'admin_edit_product']);
+//    $routes->get('delete-product/(:num)', 'AdminDashboard::deleteProduct/$1', ['as' => 'admin_delete_product']);
+//    $routes->get('orders', 'AdminDashboard::orders', ['as' => 'admin_orders']);
+//    $routes->get('sales-report', 'AdminDashboard::salesReport', ['as' => 'admin_sales_report']);
+//    $routes->get('account', 'AdminDashboard::account', ['as' => 'admin_account']);
+//});
 
 // User Account Routes (apply 'session' filter for logged-in users)
 $routes->group('account', ['filter' => 'session'], function ($routes) {
