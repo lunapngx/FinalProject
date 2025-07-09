@@ -27,7 +27,7 @@ class Auth extends BaseController
                 // Redirect based on user role
                 if ($user['role'] === 'admin') {
                     // Correct: Redirect to the named admin route
-                    return redirect()->to(url_to('admin_dashboard'));
+                    return redirect()->route('/admin/dashboard');
                 } else {
                     // Correct: Redirect to the user's view
                     return redirect()->to('/user/dashboard');

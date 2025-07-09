@@ -45,7 +45,7 @@ $routes->post('order/place', 'OrderController::place', ['as' => 'order_place']);
 
 $routes->group('admin', ['filter' => 'group:admin,superadmin'], static function ($routes) {
     // Make sure 'as' => 'admin.dashboard' is present
-    $routes->get('dashboard', 'AdminController::dashboard', ['as' => 'admin.dashboard']);
+    $routes->get('dashboard', 'AdminController::dashboard', ['as' => 'dashboard']);
 });
 
 $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
