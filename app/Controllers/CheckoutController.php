@@ -1,4 +1,4 @@
-<?php namespace App\Controllers; // Changed from App\Controllers\User
+<?php namespace App\Controllers; // Changed from App\Controllers\wishlist
 // Changed namespace from just App\Controllers
 
 use App\Controllers\BaseController;

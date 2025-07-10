@@ -54,11 +54,11 @@ class AuthGroups extends ShieldAuthGroups
             'description' => 'Site programmers.',
         ],
         'user' => [
-            'title'       => 'User',
+            'title'       => 'wishlist',
             'description' => 'General users of the site. Often customers.',
         ],
         'beta' => [
-            'title'       => 'Beta User',
+            'title'       => 'Beta wishlist',
             'description' => 'Has access to beta-level features.',
         ],
     ];

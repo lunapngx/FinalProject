@@ -145,7 +145,7 @@ class AdminDashboard extends BaseController
         $data['title']    = 'Admin Account';
         // This assumes admin username is stored in session upon login.
         // If using Shield, you'd fetch user details via auth()->user()
-        $data['username'] = $this->session->get('admin_username') ?? 'Admin User';
+        $data['username'] = $this->session->get('admin_username') ?? 'Admin wishlist';
         return view('Admin/account', $data);
     }
 }
