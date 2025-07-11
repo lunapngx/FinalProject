@@ -37,7 +37,7 @@ class CheckoutController extends BaseController // Extends BaseController
                     'qty'   => $quantity,
                     'price' => $itemPrice,
                     'itemTotal' => $itemSubtotal,
-                    'thumb' => 'public/assets/img/' . $product['image'], // Path for product image thumbnail in view
+                    'thumb' => 'assets/img/' . $product['image'],
                     'options' => [], // Placeholder: populate if product options are stored in the cart
                 ];
                 $subtotal += $itemSubtotal; // Accumulate subtotal
@@ -82,7 +82,7 @@ class CheckoutController extends BaseController // Extends BaseController
             'state' => 'required',
             'zip' => 'required',
             'country' => 'required',
-            'payment_method' => 'required|in_list[cod,pickup]' // Adjusted based on current payment options
+            'payment_method' => 'required|in_list[cod,pickup,free]' // Adjusted based on current payment options
         ];
 
         if (!$this->validate($rules)) {
