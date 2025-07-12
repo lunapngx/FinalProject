@@ -40,7 +40,7 @@
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
         </div>
-        <button type="submit" class="btn">Login</button>
+        <button type="submit" class="btn" >Login</button>
     </form>
     <div class="register-link">
         <p>Need an account? <a href="<?= url_to('register') ?>">Register here</a></p>

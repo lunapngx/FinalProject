@@ -9,7 +9,7 @@ class LoginController extends BaseController
     {
         // If user is already logged in, redirect to account page
         if (session()->get('isLoggedIn')) {
-            return redirect()->to('account');
+            return redirect()->to('login');
         }
 
         return view('login');
