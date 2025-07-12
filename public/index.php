@@ -5,6 +5,14 @@ use Config\Paths;
 
 /*
  *---------------------------------------------------------------
+ * ENVIRONMENT SETUP
+ *---------------------------------------------------------------
+ */
+// Define the environment. This helps in debugging by showing detailed errors.
+define('ENVIRONMENT', 'development'); // <--- ADD OR UNCOMMENT THIS LINE
+
+/*
+ *---------------------------------------------------------------
  * CHECK PHP VERSION
  *---------------------------------------------------------------
  */

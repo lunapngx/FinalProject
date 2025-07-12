@@ -25,25 +25,22 @@
                 <?php endif ?>
 
                 <?php if (session('message') !== null) : ?>
-                <div class="alert alert-success" role="alert"><?= session('message') ?></div>
+                    <div class="alert alert-success" role="alert"><?= session('message') ?></div>
                 <?php endif ?>
 
                 <form action="<?= url_to('login') ?>" method="post">
                     <?= csrf_field() ?>
 
-                    <!-- Email -->
                     <div class="form-floating mb-3">
                         <input type="email" class="form-control" id="floatingEmailInput" name="email" inputmode="email" autocomplete="email" placeholder="<?= lang('Auth.email') ?>" value="<?= old('email') ?>" required>
                         <label for="floatingEmailInput"><?= lang('Auth.email') ?></label>
                     </div>
 
-                    <!-- Password -->
                     <div class="form-floating mb-3">
                         <input type="password" class="form-control" id="floatingPasswordInput" name="password" inputmode="text" autocomplete="current-password" placeholder="<?= lang('Auth.password') ?>" required>
                         <label for="floatingPasswordInput"><?= lang('Auth.password') ?></label>
                     </div>
 
-                    <!-- Remember me -->
                     <?php if (setting('Auth.sessionConfig')['allowRemembering']): ?>
                         <div class="form-check">
                             <label class="form-check-label">

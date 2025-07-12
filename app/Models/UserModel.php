@@ -12,18 +12,22 @@ class UserModel extends Model
     protected $useAutoIncrement = true;
 
     protected $returnType = 'array';
-    protected $useSoftDeletes = true; // Your migration has 'deleted_at', so this should be true
+    protected $useSoftDeletes = true; // Kept as true from both sides
 
-    // Make sure these fields match your database columns
+    // Combined allowed fields from both branches.
+    // 'password_hash' is used here, assuming it's the correct column name for hashed passwords (as used in Auth.php).
     protected $allowedFields = [
         'username',
         'email',
-        'password', // Corrected from password_hash
-        'role',     // Added role
+        'password_hash', // Keeping this field as it matches usage in Auth.php
+        'role',
         'status',
         'active',
         'fullname',
         'last_active',
+        'created_at', // Included from HEAD
+        'updated_at', // Included from HEAD
+        'deleted_at'  // Included from HEAD
     ];
 
     // Dates
@@ -33,8 +37,12 @@ class UserModel extends Model
     protected $updatedField = 'updated_at';
     protected $deletedField = 'deleted_at';
 
-    // Validation
-    protected $validationRules = [];
+    // Validation rules from HEAD, as remote had an empty array.
+    protected $validationRules = [
+        'email' => 'required|valid_email|is_unique[users.email,id,{id}]',
+        'username' => 'permit_empty|min_length[3]|is_unique[users.username,id,{id}]',
+        'password_hash' => 'required',
+    ];
     protected $validationMessages = [];
     protected $skipValidation = false;
     protected $cleanValidationRules = true;

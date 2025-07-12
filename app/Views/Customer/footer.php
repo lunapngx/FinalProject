@@ -1,11 +1,13 @@
 <footer id="footer" class="footer">
+
+    <!-- Newsletter Section -->
     <div class="footer-newsletter">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8 text-center">
-                    <h2>Join Our Newsletter</h2>
-                    <p>Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>
-                    <form action="#" method="post" class="php-email-form"> <div class="newsletter-form d-flex">
+                    <h2>Enjoy Shopping!</h2>
+                    <form action="#" method="post" class="php-email-form">
+                        <div class="newsletter-form d-flex">
                             <input type="email" name="email" placeholder="Your email address" required="">
                             <button type="submit">Subscribe</button>
                         </div>
@@ -18,6 +20,7 @@
         </div>
     </div>
 
+    <!-- Main Footer -->
     <div class="footer-main">
         <div class="container">
             <div class="row gy-4">
@@ -73,19 +76,6 @@
                 </div>
 
                 <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="footer-widget">
-                        <h4>Download Our App</h4>
-                        <p>Shop on the go with our mobile app</p>
-                        <div class="app-buttons">
-                            <a href="#" class="app-btn">
-                                <i class="bi bi-apple"></i>
-                                <span>App Store</span>
-                            </a>
-                            <a href="#" class="app-btn">
-                                <i class="bi bi-google-play"></i>
-                                <span>Google Play</span>
-                            </a>
-                        </div>
                         <div class="social-links mt-4">
                             <h5>Follow Us</h5>
                             <div class="social-icons">
@@ -103,39 +93,28 @@
         </div>
     </div>
 
+    <!-- Bottom Footer -->
     <div class="footer-bottom">
         <div class="container">
-
-            <div class="payment-methods d-flex align-items-center justify-content-center">
-                <span>We Accept:</span>
-                <div class="payment-icons">
-                    <i class="bi bi-cash" aria-label="Cash on Delivery"></i>
-                </div>
-            </div>
-
-            <div class="legal-links">
-                <a href="#">Terms of Service</a>
+            <div class="legal-links text-center mt-2">
+                <a href="#">Terms and Conditions</a>
                 <a href="#">Privacy Policy</a>
-                <a href="#">Cookies Settings</a>
             </div>
 
-            <div class="copyright text-center">
-                <p>© <span>Copyright</span> <strong class="sitename">Your Flower Shop</strong>. All Rights Reserved.</p>
-            </div>
-
-            <div class="credits">
-                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-            </div>
-
+            <div class="copyright text-center mt-2">
+                <p>© <?= date('Y') ?> <strong class="sitename">Your Flower Shop</strong>. All Rights Reserved.</p>
+            </div
         </div>
-
     </div>
 </footer>
 
-<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+</a>
 
 <div id="preloader"></div>
 
+<!-- JS Libraries -->
 <script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
 <script src="<?= base_url('assets/vendor/php-email-form/validate.js') ?>"></script>
 <script src="<?= base_url('assets/vendor/swiper/swiper-bundle.min.js') ?>"></script>
@@ -145,7 +124,8 @@
 <script src="<?= base_url('assets/vendor/glightbox/js/glightbox.min.js') ?>"></script>
 <script src="<?= base_url('assets/vendor/drift-zoom/Drift.min.js') ?>"></script>
 <script src="<?= base_url('assets/vendor/purecounter/purecounter_vanilla.js') ?>"></script>
-
 <script src="<?= base_url('assets/js/main.js') ?>"></script>
 
 <?= $this->renderSection('scripts') ?>
+</body>
+</html>

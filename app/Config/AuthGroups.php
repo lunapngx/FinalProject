@@ -34,7 +34,7 @@ class AuthGroups extends ShieldAuthGroups
      *
      * Whatever value you assign as the key will be used to refer to the group
      * when using functions such as:
-     *      $user->addGroup('superadmin');
+     * $user->addGroup('superadmin');
      *
      * @var array<string, array<string, string>>
      *
@@ -54,11 +54,11 @@ class AuthGroups extends ShieldAuthGroups
             'description' => 'Site programmers.',
         ],
         'user' => [
-            'title'       => 'User',
+            'title'       => 'wishlist', // Resolved: lowercase 'w'
             'description' => 'General users of the site. Often customers.',
         ],
         'beta' => [
-            'title'       => 'Beta User',
+            'title'       => 'Beta wishlist', // Resolved: lowercase 'w'
             'description' => 'Has access to beta-level features.',
         ],
     ];

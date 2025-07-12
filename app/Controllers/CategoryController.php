@@ -1,30 +1,44 @@
-<?php namespace App\Controllers; // Changed from App\Controllers\User
+<?php
 
-use App\Models\CategoryModel;
-use App\Models\ProductModel;
-use CodeIgniter\Controller; // Should be BaseController if extending it directly
-use CodeIgniter\Exceptions\PageNotFoundException;
+namespace App\Controllers;
 
-// Changed to CategoryModel
+use App\Models\CategoryModel; // From remote
+use App\Models\ProductModel; // From remote
 
-class CategoryController extends BaseController // Assuming you want to extend BaseController
+use CodeIgniter\Controller; // Assuming BaseController extends CodeIgniter\Controller
+
+class CategoryController extends BaseController
 {
-    public function view(string $slug)
+    public function index($slug = null) // Adopt remote's signature to allow for slug
     {
-        $catModel = new CategoryModel();
-        $category = $catModel->where('slug', $slug)->first();
+        $categoryModel = new CategoryModel();
+        $productModel = new ProductModel();
 
-        if (!$category) {
-            throw new PageNotFoundException('Category not found: ' . $slug);
+        if ($slug === null) {
+            // Logic from remote: If no slug, show all categories
+            $data['categories'] = $categoryModel->findAll();
+            // Your original view for index was 'category/index', remote was 'Category/index'
+            // Let's standardize to 'Category/index' for consistency.
+            return view('Category/index', $data);
         }
 
-        $prodModel = new ProductModel();
-        $products  = $prodModel->where('category_id', $category['id'])->findAll();
+        // Logic from remote: Find category by slug and its products
+        $category = $categoryModel->where('slug', $slug)->first();
 
-        return view('Category/index', [ // Assumed this view should be used for categories listing by slug
-            'category' => $category, // Changed 'Category' to 'category' (lowercase) for consistency
-            'products' => $products,
-            'title' => $category['name'], // Set title dynamically
-        ]);
+        if (!$category) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Cannot find the category: ' . $slug);
+        }
+
+        $data['category'] = $category;
+        $data['products'] = $productModel->where('category_id', $category['id'])->findAll();
+
+        return view('Product/index', $data); // Remote's view for products in a category
     }
+
+    // Your original comment block is kept.
+    // You can add other methods here, e.g., to display products within a specific category
+    // public function show($slug)
+    // {
+    //     // Logic to fetch a specific category and its products
+    // }
 }

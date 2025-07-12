@@ -1,124 +1,111 @@
 <?= $this->extend('Layout/master') ?>
-
 <?= $this->section('title') ?>Checkout<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
-    <div class="checkout-container">
+
+<div class="checkout-container row my-5">
+
+    <!-- LEFT: Checkout Form -->
+    <div class="col-md-7">
         <?php if (isset($validation)): ?>
-            <div class="alert alert-danger" role="alert">
-                <?= $validation->listErrors() ?>
-            </div>
+            <div class="alert alert-danger"><?= $validation->listErrors() ?></div>
         <?php endif; ?>
 
         <?php if (session()->getFlashdata('success')): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <?= session()->getFlashdata('success') ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+            <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
         <?php endif; ?>
         <?php if (session()->getFlashdata('error')): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?= session()->getFlashdata('error') ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+            <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
         <?php endif; ?>
 
-        <div class="left">
-            <?= form_open(url_to('checkout_process')) ?><?= csrf_field() ?>
+        <?= form_open(route_to('checkout_process')) ?>
+        <?= csrf_field() ?>
 
-            <h3>1. Customer Information</h3>
-            <input type="text" name="first_name" placeholder="First Name" value="<?= set_value('first_name') ?>"
-                   required><br><br>
-            <input type="text" name="last_name" placeholder="Last Name" value="<?= set_value('last_name') ?>"
-                   required><br><br>
-            <input type="email" name="email" placeholder="Email" value="<?= set_value('email') ?>" required><br><br>
-            <input type="text" name="phone" placeholder="Phone" value="<?= set_value('phone') ?>" required><br><br>
-
-            <h3>2. Shipping Address</h3>
-            <input type="text" name="street" placeholder="Street Address" value="<?= set_value('street') ?>"
-                   required><br><br>
-            <input type="text" name="apartment" placeholder="Apt, Suite, etc. (opt)"
-                   value="<?= set_value('apartment') ?>"><br><br>
-            <input type="text" name="city" placeholder="City" value="<?= set_value('city') ?>" required><br><br>
-            <input type="text" name="state" placeholder="State" value="<?= set_value('state') ?>" required><br><br>
-            <input type="text" name="zip" placeholder="ZIP Code" value="<?= set_value('zip') ?>" required><br><br>
-            <input type="text" name="country" placeholder="Country" value="<?= set_value('country') ?: 'Philippines' ?>"
-                   required><br><br>
-
-
-            <h3>3. Payment Method</h3>
-            <label>
-                <input type="radio" name="payment_method" value="cod"
-                    <?= set_radio('payment_method', 'cod', true) ?>>
-                Cash on Delivery
-            </label><br><br>
-
-            <label>
-                <input type="radio" name="payment_method" value="pickup"
-                    <?= set_radio('payment_method', 'pickup') ?>>
-                Pick Up
-            </label><br><br>
-
-            <button type="submit">Place Order</button>
-            <?= form_close() ?>
+        <h4>1. Customer Information</h4>
+        <div class="mb-2">
+            <input type="text" name="first_name" class="form-control" placeholder="First Name" value="<?= set_value('first_name') ?>" required>
+        </div>
+        <div class="mb-2">
+            <input type="text" name="last_name" class="form-control" placeholder="Last Name" value="<?= set_value('last_name') ?>" required>
+        </div>
+        <div class="mb-2">
+            <input type="email" name="email" class="form-control" placeholder="Email" value="<?= set_value('email') ?>" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" name="phone" class="form-control" placeholder="Phone" value="<?= set_value('phone') ?>" required>
         </div>
 
-        <div class="right order-summary">
-            <h3>Order Summary <small>(<?= count($items) ?> Items)</small></h3>
+        <h4>2. Shipping Address</h4>
+        <div class="mb-2">
+            <input type="text" name="street" class="form-control" placeholder="Street Address" value="<?= set_value('street') ?>" required>
+        </div>
+        <div class="mb-2">
+            <input type="text" name="apartment" class="form-control" placeholder="Apartment (optional)" value="<?= set_value('apartment') ?>">
+        </div>
+        <div class="mb-2">
+            <input type="text" name="city" class="form-control" placeholder="City" value="<?= set_value('city') ?>" required>
+        </div>
+        <div class="mb-2">
+            <input type="text" name="state" class="form-control" placeholder="State" value="<?= set_value('state') ?>" required>
+        </div>
+        <div class="mb-2">
+            <input type="text" name="zip" class="form-control" placeholder="ZIP Code" value="<?= set_value('zip') ?>" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" name="country" class="form-control" placeholder="Country" value="<?= set_value('country', 'Philippines') ?>" required>
+        </div>
+
+        <h4>3. Payment Method</h4>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="payment_method" value="cod" <?= set_radio('payment_method', 'cod', true) ?>>
+            <label class="form-check-label">Cash on Delivery</label>
+        </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" name="payment_method" value="pickup" <?= set_radio('payment_method', 'pickup') ?>>
+            <label class="form-check-label">Pick Up</label>
+        </div>
+
+        <button type="submit" class="btn btn-dark">Place Order</button>
+        <?= form_close() ?>
+    </div>
+
+    <!-- RIGHT: Order Summary -->
+    <div class="col-md-5">
+        <div class="card p-4">
+            <h4>Order Summary <small>(<?= count($items) ?> items)</small></h4>
+            <hr>
 
             <?php foreach ($items as $it): ?>
-                <div class="item" style="display:flex; gap:.5rem; margin-bottom:1rem;">
-                    <img src="<?= esc($it['thumb'] ?? base_url('public/assets/img/product/product-placeholder.jpg')) ?>"
-                         width="60" alt="<?= esc($it['name']) ?>">
-                    <div class="details" style="flex:1;">
+                <div class="d-flex mb-3">
+                    <img src="<?= base_url($it['thumb']) ?>" width="60" class="me-3" alt="<?= esc($it['name']) ?>">
+                    <div>
                         <strong><?= esc($it['name']) ?></strong><br>
-                        <?php if (isset($it['options'])): ?>
-                            <small>
-                                <?php foreach ($it['options'] as $key => $value): ?>
-                                    <?= esc(ucfirst($key)) ?>: <?= esc($value) ?> |
-                                <?php endforeach; ?>
-                            </small><br>
-                        <?php endif; ?>
-                        <span><?= $it['qty'] ?> × <?= number_to_currency($it['price'], 'PHP') ?></span>
+                        <small><?= $it['qty'] ?> × <?= number_to_currency($it['price'], 'PHP') ?></small>
                     </div>
                 </div>
-                <hr>
-            <?php endforeach ?>
+            <?php endforeach; ?>
 
-            <div class="promo" style="display:flex; gap:.5rem; margin:1rem 0;">
-                <input type="text" name="promo_code" placeholder="Promo Code">
-                <button type="button">Apply</button>
-            </div>
+            <hr>
 
-            <div class="totals">
-                <div style="display:flex;justify-content:space-between">
-                    <span>Subtotal</span><span><?= number_to_currency($subtotal, 'PHP') ?></span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                    <span>Shipping</span><span><?= number_to_currency($shipping, 'PHP') ?></span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                    <span>Tax</span><span><?= number_to_currency($tax, 'PHP') ?></span>
-                </div>
-                <hr style="border:0;border-top:1px dotted #ccc;">
-                <div style="display:flex;justify-content:space-between;font-size:1.1rem">
-                    <strong>Total</strong><strong><?= number_to_currency($total, 'PHP') ?></strong>
+            <div class="mb-3">
+                <label>Promo Code</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Promo Code">
+                    <button class="btn btn-outline-secondary" type="button">Apply</button>
                 </div>
             </div>
 
-            <div class="secure" style="text-align:center;margin-top:1rem;font-size:.9rem">
-                🔒 Secure Checkout
-                <div class="icons" style="font-size:1.5rem;margin-top:.5rem">
-                    💳 🏦 🅿️ 🍎
-                </div>
-            </div>
+            <div class="d-flex justify-content-between"><span>Subtotal:</span><span><?= number_to_currency($subtotal, 'PHP') ?></span></div>
+            <div class="d-flex justify-content-between"><span>Shipping:</span><span><?= number_to_currency($shipping, 'PHP') ?></span></div>
+            <div class="d-flex justify-content-between"><span>Tax:</span><span><?= number_to_currency($tax, 'PHP') ?></span></div>
+            <hr>
+            <div class="d-flex justify-content-between fw-bold"><span>Total:</span><span><?= number_to_currency($total, 'PHP') ?></span></div>
+        </div>
+
+        <div class="text-center mt-3 small">
+            🔒 Secure Checkout &nbsp; | &nbsp; 💳 🏦 🅿️ 🍎
         </div>
     </div>
-<?= $this->endSection() ?>
 
+</div>
 
-<?= $this->section('scripts') ?>9
-    <script>
-        // any JS you need just on this page
-    </script>
 <?= $this->endSection() ?>

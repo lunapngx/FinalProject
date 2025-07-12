@@ -109,7 +109,7 @@ class Auth extends ShieldAuth
      * The available authentication systems, listed
      * with alias and class name. These can be referenced
      * by alias in the auth helper:
-     *      auth('tokens')->attempt($credentials);
+     * auth('tokens')->attempt($credentials);
      *
      * @var array<string, class-string<AuthenticatorInterface>>
      */
@@ -291,11 +291,11 @@ class Auth extends ShieldAuth
      * being used in passwords. The email and username fields are always
      * considered by the validator. Do not enter those field names here.
      *
-     * An extended User Entity might include other personal info such as
+     * An extended wishlist Entity might include other personal info such as
      * first and/or last names. $personalFields is where you can add
      * fields to be considered as "personal" by the NothingPersonalValidator.
      * For example:
-     *     $personalFields = ['firstname', 'lastname'];
+     * $personalFields = ['firstname', 'lastname'];
      */
     public array $personalFields = [];
 
@@ -329,7 +329,7 @@ class Auth extends ShieldAuth
      * perfectly acceptable which clearly they are not.
      *
      * To disable similarity checking set the value to 0.
-     *     public $maxSimilarity = 0;
+     * public $maxSimilarity = 0;
      */
     public int $maxSimilarity = 50;
 
@@ -386,6 +386,8 @@ class Auth extends ShieldAuth
      */
     public ?string $DBGroup = null;
 
+    // ... other code ...
+
     /**
      * --------------------------------------------------------------------
      * Customize Name of Shield Tables
@@ -407,18 +409,22 @@ class Auth extends ShieldAuth
      * @var array<string, string>
      */
     public array $tables = [
-        'users'             => 'users',
-        'identities'        => 'auth_identities',
-        'logins'            => 'auth_logins',
-        'token_logins'      => 'auth_token_logins',
-        'remember_tokens'   => 'auth_remember_tokens',
-        'groups_users'      => 'auth_groups_users',
-        'permissions_users' => 'auth_permissions_users',
+        'users'                 => 'users',
+        'identities'            => 'auth_identities',
+        'logins'                => 'auth_logins',
+        'token_logins'          => 'auth_token_logins',
+        'remember_tokens'       => 'auth_remember_tokens',
+        'groups'                => 'auth_groups',
+        'permissions'           => 'auth_permissions',
+        'groups_users'          => 'auth_groups_users', // <--- This line must be here
+        'permissions_users'     => 'auth_permissions_users',
+        'throttler'             => 'throttler',
+        'sessions'              => 'ci_sessions',
     ];
 
     /**
      * --------------------------------------------------------------------
-     * User Provider
+     * Wishlist Provider
      * --------------------------------------------------------------------
      * The name of the class that handles user persistence.
      * By default, this is the included UserModel, which
