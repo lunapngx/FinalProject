@@ -15,11 +15,12 @@ class UserModel extends Model
     protected $useSoftDeletes = true; // Your migration has 'deleted_at', so this should be true
 
     // Make sure these fields match your database columns
+    // ...
     protected $allowedFields = [
         'username',
         'email',
-        'password', // Corrected from password_hash
-        'role',     // Added role
+        'password_hash', // Changed from 'password'
+        'role',
         'status',
         'active',
         'fullname',

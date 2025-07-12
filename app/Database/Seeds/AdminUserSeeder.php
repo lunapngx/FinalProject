@@ -3,31 +3,42 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use App\Models\UserModel;
+use CodeIgniter\Shield\Entities\User;
 
 class AdminUserSeeder extends Seeder
 {
     public function run()
     {
-        $model = new UserModel();
+        // Get Shield's user model
+        $users = auth()->getProvider();
 
-        $data = [
+        // Check if the admin user already exists
+        if ($users->findByCredentials(['username' => 'admin'])) {
+            echo "✅ Admin user already exists. Skipping creation.\n";
+            return;
+        }
+
+        // If user doesn't exist, create them
+        echo "Admin user not found. Creating now...\n";
+
+        $user = new User([
             'username' => 'admin',
             'email'    => 'admin@example.com',
-            'password' => password_hash('adminpassword', PASSWORD_DEFAULT), // This should match the field in allowedFields
-            'role'     => 'admin',
-            'fullname' => 'Administrator',
+            'password' => 'adminpassword',
             'active'   => 1,
-            'status'   => 'active',
-        ];
+        ]);
+        $users->save($user);
 
-        $existingAdmin = $model->where('email', $data['email'])->first();
+        // Get the ID of the user we just created
+        $userId = $users->getInsertID();
 
-        if (!$existingAdmin) {
-            $model->save($data);
-            echo "Admin user created successfully.\n";
-        } else {
-            echo "Admin user already exists.\n";
-        }
+        // Get the group model
+        $groupModel = model('GroupModel');
+        $adminGroup = $groupModel->where('name', 'admin')->first();
+
+        // Add the user to the 'admin' group
+        $groupModel->addUserToGroup($userId, $adminGroup->id);
+
+        echo "✅ Admin user created and assigned to the 'admin' group successfully!\n";
     }
 }
