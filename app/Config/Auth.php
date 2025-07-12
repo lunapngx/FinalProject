@@ -409,14 +409,17 @@ class Auth extends ShieldAuth
      * @var array<string, string>
      */
     public array $tables = [
-        'users'             => 'users',
-        'identities'        => 'auth_identities',
-        'logins'            => 'auth_logins',
-        'token_logins'      => 'auth_token_logins',
-        'remember_tokens'   => 'auth_remember_tokens',
-        'groups'            => 'auth_groups', // ADD THIS LINE
-        'groups_users'      => 'auth_groups_users',
-        'permissions_users' => 'auth_permissions_users',
+        'users'                 => 'users',
+        'identities'            => 'auth_identities',
+        'logins'                => 'auth_logins',
+        'token_logins'          => 'auth_token_logins',
+        'remember_tokens'       => 'auth_remember_tokens',
+        'groups'                => 'auth_groups',
+        'permissions'           => 'auth_permissions',
+        'groups_users'          => 'auth_groups_users', // <--- This line must be here
+        'permissions_users'     => 'auth_permissions_users',
+        'throttler'             => 'throttler',
+        'sessions'              => 'ci_sessions',
     ];
 
     /**
