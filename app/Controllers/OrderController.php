@@ -1,4 +1,4 @@
-<?php namespace App\Controllers; // Changed from App\Controllers\User
+<?php namespace App\Controllers; // Changed from App\Controllers\wishlist
 // Changed namespace
 
 use App\Controllers\BaseController;
@@ -55,7 +55,7 @@ class OrderController extends BaseController // Extends BaseController
             'subtotal_amount' => $totalAmount,
             'shipping_cost' => $shippingCost,
             'shipping_address' => 'N/A for quick buy, fill from user profile or ask', // This needs proper handling
-            'shipping_name' => 'Guest User', // This needs proper handling
+            'shipping_name' => 'Guest wishlist', // This needs proper handling
             'shipping_email' => 'guest@example.com', // This needs proper handling
             'shipping_phone' => 'N/A', // This needs proper handling
             'payment_method' => 'cod', // Default for quick buy, or prompt user

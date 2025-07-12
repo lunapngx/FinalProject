@@ -1,4 +1,4 @@
-<?php namespace App\Controllers; // Changed from App\Controllers\User
+<?php namespace App\Controllers; // Changed from App\Controllers\wishlist
 
 use App\Models\CategoryModel;
 use App\Models\ProductModel;

@@ -1,4 +1,6 @@
-<?php namespace App\Controllers; // Changed from App\Controllers\User
+<?php
+
+namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\ProductModel;
@@ -7,19 +9,19 @@ use Config\Services;
 
 class CartController extends BaseController
 {
-    protected $productModel;
     protected $session;
+    protected $productModel;
 
     public function __construct()
     {
-        $this->productModel = new ProductModel();
         $this->session = Services::session();
+        $this->productModel = new ProductModel();
         helper(['form', 'url']);
     }
 
-    public function index(): string
+    public function index()
     {
-        $cartItems = $this->session->get('cart') ?? []; // Get cart from session
+        $cartItems = $this->session->get('cart') ?? [];
         $fullCartItems = [];
         $total = 0;
 
@@ -27,34 +29,50 @@ class CartController extends BaseController
             $product = $this->productModel->find($productId);
             if ($product) {
                 $itemTotal = $product['price'] * $quantity;
+
+                // Handle JSON-decoded options
+                $options = [];
+
+                if (!empty($product['colors'])) {
+                    $colors = json_decode($product['colors'], true);
+                    if (is_array($colors) && count($colors) > 0) {
+                        $options['color'] = $colors[0]; // Default or first value
+                    }
+                }
+
+                if (!empty($product['sizes'])) {
+                    $sizes = json_decode($product['sizes'], true);
+                    if (is_array($sizes) && count($sizes) > 0) {
+                        $options['size'] = $sizes[0]; // Default or first value
+                    }
+                }
+
                 $fullCartItems[] = (object)[
                     'product' => $product,
                     'quantity' => $quantity,
                     'itemTotal' => $itemTotal,
-                    // Assume options are stored in cart for now, or fetch from product if applicable
-                    'options' => [], // Placeholder for product options if not stored in session
+                    'options' => $options,
                 ];
                 $total += $itemTotal;
             }
         }
 
         $data = [
-            'title' => 'Your Shopping Cart',
+            'title' => 'Your Cart',
             'cartItems' => $fullCartItems,
             'total' => $total,
         ];
 
-        return view('Cart/cart', $data); // Load 'Cart/cart.php' instead
+        return view('Cart/cart', $data); // View file you posted
     }
 
     public function add()
     {
-        $productId = $this->request->getPost('product_id');
-        $quantity = (int)$this->request->getPost('quantity');
+        $productId = (int) $this->request->getPost('product_id');
+        $quantity = (int) $this->request->getPost('quantity');
 
         if ($productId <= 0 || $quantity <= 0) {
-            $this->session->setFlashdata('error', 'Invalid product or quantity.');
-            return redirect()->back();
+            return redirect()->back()->with('error', 'Invalid product or quantity.');
         }
 
         $product = $this->productModel->find($productId);
@@ -63,71 +81,54 @@ class CartController extends BaseController
             throw new PageNotFoundException('Product not found.');
         }
 
-        // Get current cart from session
         $cart = $this->session->get('cart') ?? [];
 
-        // Add or update product in cart
-        if (isset($cart[$productId])) {
-            $cart[$productId] += $quantity;
-        } else {
-            $cart[$productId] = $quantity;
-        }
+        // Update or add
+        $cart[$productId] = ($cart[$productId] ?? 0) + $quantity;
 
         $this->session->set('cart', $cart);
-        $this->session->setFlashdata('success', 'Product added to cart successfully!');
-
-        return redirect()->to(url_to('cart_view'));
+        return redirect()->to(route_to('cart_view'))->with('success', 'Product added to cart!');
     }
 
     public function update()
     {
-        $productId = $this->request->getPost('product_id');
-        $quantity = (int)$this->request->getPost('quantity');
-
-        if ($productId <= 0 || $quantity < 0) {
-            $this->session->setFlashdata('error', 'Invalid product or quantity.');
-            return redirect()->back();
-        }
+        $productId = (int) $this->request->getPost('product_id');
+        $quantity = (int) $this->request->getPost('quantity');
 
         $cart = $this->session->get('cart') ?? [];
 
+        if ($productId <= 0 || $quantity < 0) {
+            return redirect()->back()->with('error', 'Invalid quantity or product.');
+        }
+
         if ($quantity === 0) {
-            // Remove item if quantity is 0
             unset($cart[$productId]);
-            $this->session->setFlashdata('info', 'Product removed from cart.');
-        } elseif (isset($cart[$productId])) {
-            // Update quantity
+            $this->session->setFlashdata('info', 'Item removed from cart.');
+        } else {
             $product = $this->productModel->find($productId);
-            if ($product && $quantity <= ($product['stock'] ?? 99)) { // Check against stock if available
+            if ($product && $quantity <= ($product['stock'] ?? 99)) {
                 $cart[$productId] = $quantity;
-                $this->session->setFlashdata('success', 'Cart updated successfully!');
+                $this->session->setFlashdata('success', 'Cart updated!');
             } else {
-                $this->session->setFlashdata('error', 'Requested quantity exceeds available stock.');
+                return redirect()->back()->with('error', 'Quantity exceeds stock.');
             }
         }
 
         $this->session->set('cart', $cart);
-
-        return redirect()->to(url_to('cart_view'));
+        return redirect()->to(route_to('cart_view'));
     }
 
     public function remove()
     {
-        $productId = $this->request->getPost('product_id');
-
-        if ($productId <= 0) {
-            $this->session->setFlashdata('error', 'Invalid product.');
-            return redirect()->back();
-        }
-
+        $productId = (int) $this->request->getPost('product_id');
         $cart = $this->session->get('cart') ?? [];
 
         if (isset($cart[$productId])) {
             unset($cart[$productId]);
             $this->session->set('cart', $cart);
-            $this->session->setFlashdata('info', 'Product removed from cart.');
+            return redirect()->to(route_to('cart_view'))->with('info', 'Product removed.');
         }
 
-        return redirect()->to(url_to('cart_view'));
+        return redirect()->back()->with('error', 'Product not found in cart.');
     }
 }

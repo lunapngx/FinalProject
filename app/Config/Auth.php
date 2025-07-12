@@ -291,7 +291,7 @@ class Auth extends ShieldAuth
      * being used in passwords. The email and username fields are always
      * considered by the validator. Do not enter those field names here.
      *
-     * An extended User Entity might include other personal info such as
+     * An extended wishlist Entity might include other personal info such as
      * first and/or last names. $personalFields is where you can add
      * fields to be considered as "personal" by the NothingPersonalValidator.
      * For example:
@@ -418,7 +418,7 @@ class Auth extends ShieldAuth
 
     /**
      * --------------------------------------------------------------------
-     * User Provider
+     * wishlist Provider
      * --------------------------------------------------------------------
      * The name of the class that handles user persistence.
      * By default, this is the included UserModel, which
