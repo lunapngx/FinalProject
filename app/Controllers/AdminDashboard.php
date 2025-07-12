@@ -142,10 +142,27 @@ class AdminDashboard extends BaseController
 
     public function account()
     {
-        $data['title']    = 'Admin Account';
-        // This assumes admin username is stored in session upon login.
-        // If using Shield, you'd fetch user details via auth()->user()
-        $data['username'] = $this->session->get('admin_username') ?? 'Admin User';
-        return view('Admin/account', $data);
+        $data['title'] = 'Admin Account';
+        $adminId = $this->session->get('userId'); // Get logged-in admin's user ID from session
+        $adminRole = $this->session->get('role'); // Get logged-in admin's role from session
+
+        // Ensure the logged-in user is an admin
+        if (!$adminId || $adminRole !== 'admin') {
+            // Redirect to login or show an unauthorized message
+            $this->session->setFlashdata('error', 'Unauthorized access to admin account.');
+            return redirect()->to('/login'); // Adjust this path as per your routing
+        }
+
+        // Fetch admin user details using the AdminModel
+        $adminUser = $this->adminModel->find($adminId);
+
+        if (!$adminUser) {
+            // Handle case where admin user is not found (e.g., deleted)
+            $this->session->setFlashdata('error', 'Admin account not found.');
+            return redirect()->to('/login'); // Adjust this path as per your routing
+        }
+
+        $data['admin'] = $adminUser; // Pass the full admin user object to the view
+        return view('Admin/adminaccount', $data); // Assuming adminaccount.php exists for displaying admin details
     }
 }
