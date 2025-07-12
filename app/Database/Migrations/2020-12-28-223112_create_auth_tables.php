@@ -136,7 +136,7 @@ class CreateAuthTables extends Migration
         $this->forge->addForeignKey('group', $this->tables['groups'], 'name', '', 'CASCADE');
         $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', '', 'CASCADE');
         $this->forge->addUniqueKey(['user_id', 'group']);
-        $this->createTable($this->tables['auth_roups_users']);
+        $this->createTable($this->tables['auth_groups_users']);
 
         // Users Permissions Table
         $this->forge->addField([
