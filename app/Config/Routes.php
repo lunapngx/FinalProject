@@ -1,69 +1,96 @@
 <?php
 
-use CodeIgniter\Router\RouteCollection;
+namespace Config;
 
-/**
- * @var RouteCollection $routes
+// Create a new instance of our RouteCollection class.
+$routes = Services::routes();
+
+/*
+ * --------------------------------------------------------------------
+ * Router Setup
+ * --------------------------------------------------------------------
  */
-// Remove duplicate: $routes->get('/', 'Home::index');
+$routes->setDefaultNamespace('App\Controllers');
+$routes->setDefaultController('Home');
+$routes->setDefaultMethod('index');
+$routes->setTranslateURIDashes(false);
+$routes->set404Override();
+$routes->setAutoRoute(false); // Disable auto-routing for security
 
-// IMPORTANT: Uncomment this line only if you want to use CodeIgniter Shield for authentication.
-// If you use your custom App\Controllers\Auth, keep this line commented out.
-service('auth')->routes($routes);
+/*
+ * --------------------------------------------------------------------
+ * Route Definitions
+ * --------------------------------------------------------------------
+ */
 
-// Custom Authentication Routes (if not using Shield)
-$routes->get('login', 'Auth::login', ['as' => 'login']);
-$routes->post('login', 'Auth::login');
-$routes->get('register', 'Auth::register', ['as' => 'register']);
-$routes->post('register', 'Auth::register');
-$routes->get('logout', 'Auth::logout', ['as' => 'logout']);
-
-$routes->get('Wishlist', 'WishlistController::index', ['as' => 'wishlist_view']);
-$routes->post('Wishlist/add', 'WishlistController::add');
-$routes->post('Wishlist/remove', 'WishlistController::remove');
-$routes->post('Wishlist/update', 'WishlistController::update');
-
-$routes->get('Cart', 'CartController::index', ['as' => 'cart_view']);
-
-
-// Frontend Routes
+// We get a performance increase by specifying the default
+// route since we don't have to scan directories.
 $routes->get('/', 'Home::index', ['as' => 'home']);
-$routes->get('about', 'Home::about', ['as' => 'about']);
-$routes->get('categories', 'Home::categories', ['as' => 'categories_list']); // Route to list all categories if Home::categories handles it
+$routes->get('/about', 'Home::about', ['as' => 'about']);
 
-// Product Routes
-$routes->get('product', 'ProductController::index', ['as' => 'products_list']); // Removed wishlist\
-$routes->get('product/(:num)', 'ProductController::show/$1', ['as' => 'product_detail']); // Removed wishlist\
-$routes->get('category/(:segment)', 'CategoryController::view/$1', ['as' => 'products_by_category_slug']); // Removed wishlist\
+// User authentication routes
+$routes->get('/login', 'LoginController::index', ['as' => 'login']);
+$routes->post('/login', 'LoginController::attemptLogin');
+$routes->get('/logout', 'LoginController::logout', ['as' => 'logout']);
+$routes->get('/register', 'RegisterController::index', ['as' => 'register']);
+$routes->post('/register', 'RegisterController::attemptRegister');
 
-// CartButton Routes (already fixed in previous turn)
-$routes->get('cart', 'CartController::index', ['as' => 'cart_view']);
-$routes->post('cart/add', 'CartController::add', ['as' => 'cart_add']);
-$routes->post('cart/update', 'CartController::update', ['as' => 'cart_update']);
-$routes->post('cart/remove', 'CartController::remove', ['as' => 'cart_remove']);
+// Product and Category Routes
+$routes->get('/products', 'ProductController::index', ['as' => 'products']);
+$routes->get('/product/(:segment)', 'ProductController::show/$1', ['as' => 'product_detail']);
+$routes->get('/categories', 'CategoryController::index', ['as' => 'categories_list']);
+$routes->get('/category/(:segment)', 'CategoryController::index/$1', ['as' => 'category']);
 
-// Checkout Routes
-$routes->get('checkout', 'CheckoutController::index', ['as' => 'checkout_view']);
-$routes->post('checkout/process', 'CheckoutController::process', ['as' => 'checkout_process']);
+// Cart and Checkout
+$routes->get('/cart', 'CartController::index', ['as' => 'cart_view']);
+$routes->post('/cart/add', 'CartController::add', ['as' => 'cart_add']);
+$routes->get('/cart/remove/(:any)', 'CartController::remove/$1', ['as' => 'cart_remove']);
+$routes->get('/checkout', 'CheckoutController::index', ['as' => 'checkout_view']);
+$routes->post('/checkout/place-order', 'OrderController::placeOrder', ['as' => 'place_order']);
 
-// Order Routes
-$routes->post('order/place', 'OrderController::place', ['as' => 'order_place']); // Removed wishlist\
+// Customer Account Routes
+$routes->get('/account', 'UserController::index', ['as' => 'account', 'filter' => 'auth']);
+$routes->get('/account/orders', 'OrderController::index', ['as' => 'account_orders', 'filter' => 'auth']);
+$routes->get('/account/wishlist', 'WishlistController::index', ['as' => 'account_wishlist', 'filter' => 'auth']);
 
-// Admin Group Routes (apply 'group:admin' filter, assuming you have Shield or custom group checking)
-$routes->group('admin', ['filter' => 'group:admin'], function ($routes) {
-    $routes->get('/', 'AdminDashboard::dashboard', ['as' => 'admin_dashboard']);
-    $routes->get('products', 'AdminDashboard::products', ['as' => 'admin_products']);
-    $routes->match(['get', 'post'], 'add-product', 'AdminDashboard::addProduct', ['as' => 'admin_add_product']);
-    $routes->match(['get', 'post'], 'edit-product/(:num)', 'AdminDashboard::editProduct/$1', ['as' => 'admin_edit_product']);
-    $routes->get('delete-product/(:num)', 'AdminDashboard::deleteProduct/$1', ['as' => 'admin_delete_product']);
-    $routes->get('orders', 'AdminDashboard::orders', ['as' => 'admin_orders']);
-    $routes->get('sales-report', 'AdminDashboard::salesReport', ['as' => 'admin_sales_report']);
-    $routes->get('account', 'AdminDashboard::account', ['as' => 'admin_account']);
+
+// ====================================================================
+// ADMIN ROUTES - START
+// ====================================================================
+// This section now has named routes to prevent errors.
+$routes->group('admin', static function ($routes) {
+    // Admin Login/Logout/Register
+    $routes->get('login', 'Admin\LoginController::index', ['as' => 'admin_login']);
+    $routes->post('login', 'Admin\LoginController::attemptLogin');
+    $routes->get('logout', 'Admin\LoginController::logout', ['as' => 'admin_logout']);
+    $routes->get('register', 'Admin\RegisterController::index', ['as' => 'admin_register']);
+    $routes->post('register', 'Admin\RegisterController::attemptRegister');
+
+    // Admin Dashboard
+    $routes->get('dashboard', 'AdminDashboard::index', ['as' => 'admin_dashboard', 'filter' => 'admin_auth']);
+    $routes->get('/', 'AdminDashboard::index', ['filter' => 'admin_auth']);
+
+    // This is the specific fix for your current error
+    $routes->get('account', 'AdminController::adminaccount', ['as' => 'admin_account', 'filter' => 'admin_auth']);
+
+    // Admin Resource Management
+    $routes->get('products', 'AdminController::products', ['as' => 'admin_products', 'filter' => 'admin_auth']);
+    $routes->get('orders', 'AdminController::orders', ['as' => 'admin_orders', 'filter' => 'admin_auth']);
+    $routes->get('sales-report', 'AdminController::sales_report', ['as' => 'admin_sales_report', 'filter' => 'admin_auth']);
+    $routes->match(['get', 'post'], 'products/add', 'AdminController::add_product', ['as' => 'admin_products_add', 'filter' => 'admin_auth']);
+    $routes->match(['get', 'post'], 'products/edit/(:num)', 'AdminController::edit_product/$1', ['as' => 'admin_products_edit', 'filter' => 'admin_auth']);
+    $routes->get('products/delete/(:num)', 'AdminController::delete_product/$1', ['as' => 'admin_products_delete', 'filter' => 'admin_auth']);
 });
+// ====================================================================
+// ADMIN ROUTES - END
+// ====================================================================
 
-// wishlist Account Routes (apply 'session' filter for logged-in users)
-$routes->group('account', ['filter' => 'session'], function ($routes) {
-    $routes->get('/', 'wishlist\AccountController::index'); // Assuming wishlist\AccountController exists
-    $routes->get('orders', 'wishlist\AccountController::orders');
-    // ...
-});
+
+/*
+ * --------------------------------------------------------------------
+ * Additional Routing
+ * --------------------------------------------------------------------
+ */
+if (is_file(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
+    require APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php';
+}

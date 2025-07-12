@@ -1,30 +1,33 @@
-<?php namespace App\Controllers; // Changed from App\Controllers\wishlist
+<?php
+
+namespace App\Controllers;
 
 use App\Models\CategoryModel;
 use App\Models\ProductModel;
-use CodeIgniter\Controller; // Should be BaseController if extending it directly
-use CodeIgniter\Exceptions\PageNotFoundException;
 
-// Changed to CategoryModel
-
-class CategoryController extends BaseController // Assuming you want to extend BaseController
+class CategoryController extends BaseController
 {
-    public function view(string $slug)
+    public function index($slug = null)
     {
-        $catModel = new CategoryModel();
-        $category = $catModel->where('slug', $slug)->first();
+        $categoryModel = new CategoryModel();
+        $productModel = new ProductModel();
 
-        if (!$category) {
-            throw new PageNotFoundException('Category not found: ' . $slug);
+        if ($slug === null) {
+            // If no slug, show all categories
+            $data['categories'] = $categoryModel->findAll();
+            return view('Category/index', $data);
         }
 
-        $prodModel = new ProductModel();
-        $products  = $prodModel->where('category_id', $category['id'])->findAll();
+        // Find category by slug
+        $category = $categoryModel->where('slug', $slug)->first();
 
-        return view('Category/index', [ // Assumed this view should be used for categories listing by slug
-            'category' => $category, // Changed 'Category' to 'category' (lowercase) for consistency
-            'products' => $products,
-            'title' => $category['name'], // Set title dynamically
-        ]);
+        if (!$category) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Cannot find the category: ' . $slug);
+        }
+
+        $data['category'] = $category;
+        $data['products'] = $productModel->where('category_id', $category['id'])->findAll();
+
+        return view('Product/index', $data); // Re-using the product list view
     }
 }

@@ -2,12 +2,21 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\Controller;
-
-class UserController extends Controller
+class UserController extends BaseController
 {
-    public function dashboard()
+    /**
+     * Displays the main user account page.
+     */
+    public function index()
     {
-        return view('Home/index');
+        // You can load user data here to pass to the view
+        $data = [
+            'user' => [
+                'name' => session()->get('user_name'),
+                'email' => session()->get('user_email'),
+            ]
+        ];
+
+        return view('Account/account', $data);
     }
 }

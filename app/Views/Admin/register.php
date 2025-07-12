@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
+    <title>Admin Registration</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 2rem 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .register-container { background-color: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 0 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
         .register-container h1 { text-align: center; margin-bottom: 1.5rem; }
         .form-group { margin-bottom: 1rem; }
@@ -20,7 +20,7 @@
 </head>
 <body>
 <div class="register-container">
-    <h1>Create an Account</h1>
+    <h1>Create Admin Account</h1>
 
     <?php if (isset($validation)): ?>
         <div class="alert alert-danger">
@@ -28,15 +28,15 @@
         </div>
     <?php endif; ?>
 
-    <form action="<?= url_to('register') ?>" method="post">
+    <form action="<?= site_url('admin/register') ?>" method="post">
         <?= csrf_field() ?>
         <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" value="<?= old('username') ?>" required>
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" name="fullname" value="<?= set_value('fullname') ?>" required>
         </div>
         <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" value="<?= old('email') ?>" required>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="<?= set_value('username') ?>" required>
         </div>
         <div class="form-group">
             <label for="password">Password</label>
@@ -49,7 +49,7 @@
         <button type="submit" class="btn">Register</button>
     </form>
     <div class="login-link">
-        <p>Already have an account? <a href="<?= url_to('login') ?>">Login here</a></p>
+        <p>Already have an account? <a href="<?= site_url('admin/login') ?>">Login here</a></p>
     </div>
 </div>
 </body>
