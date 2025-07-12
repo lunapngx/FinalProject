@@ -386,6 +386,8 @@ class Auth extends ShieldAuth
      */
     public ?string $DBGroup = null;
 
+    // ... other code ...
+
     /**
      * --------------------------------------------------------------------
      * Customize Name of Shield Tables
@@ -412,6 +414,7 @@ class Auth extends ShieldAuth
         'logins'            => 'auth_logins',
         'token_logins'      => 'auth_token_logins',
         'remember_tokens'   => 'auth_remember_tokens',
+        'groups'            => 'auth_groups', // ADD THIS LINE
         'groups_users'      => 'auth_groups_users',
         'permissions_users' => 'auth_permissions_users',
     ];

@@ -2,15 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * This file is part of CodeIgniter Shield.
- *
- * (c) CodeIgniter Foundation <admin@codeigniter.com>
- *
- * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
- */
-
 namespace CodeIgniter\Shield\Database\Migrations;
 
 use CodeIgniter\Database\Forge;
@@ -19,16 +10,11 @@ use CodeIgniter\Shield\Config\Auth;
 
 class CreateAuthTables extends Migration
 {
-    /**
-     * Auth Table names
-     */
     private array $tables;
-
     private array $attributes;
 
     public function __construct(?Forge $forge = null)
     {
-        /** @var Auth $authConfig */
         $authConfig = config('Auth');
 
         if ($authConfig->DBGroup !== null) {
@@ -59,10 +45,7 @@ class CreateAuthTables extends Migration
         $this->forge->addUniqueKey('username');
         $this->createTable($this->tables['users']);
 
-        /*
-         * Auth Identities Table
-         * Used for storage of passwords, access tokens, social login identities, etc.
-         */
+        // Auth Identities Table
         $this->forge->addField([
             'id'           => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'user_id'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
@@ -83,51 +66,39 @@ class CreateAuthTables extends Migration
         $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', '', 'CASCADE');
         $this->createTable($this->tables['identities']);
 
-        /**
-         * Auth Login Attempts Table
-         * Records login attempts. A login means users think it is a login.
-         * To login, users do action(s) like posting a form.
-         */
+        // Auth Login Attempts Table
         $this->forge->addField([
             'id'         => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'ip_address' => ['type' => 'varchar', 'constraint' => 255],
             'user_agent' => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'id_type'    => ['type' => 'varchar', 'constraint' => 255],
             'identifier' => ['type' => 'varchar', 'constraint' => 255],
-            'user_id'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true], // Only for successful logins
+            'user_id'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true],
             'date'       => ['type' => 'datetime'],
             'success'    => ['type' => 'tinyint', 'constraint' => 1],
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addKey(['id_type', 'identifier']);
         $this->forge->addKey('user_id');
-        // NOTE: Do NOT delete the user_id or identifier when the user is deleted for security audits
         $this->createTable($this->tables['logins']);
 
-        /*
-         * Auth Token Login Attempts Table
-         * Records Bearer Token type login attempts.
-         */
+        // Auth Token Login Attempts Table
         $this->forge->addField([
             'id'         => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'ip_address' => ['type' => 'varchar', 'constraint' => 255],
             'user_agent' => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'id_type'    => ['type' => 'varchar', 'constraint' => 255],
             'identifier' => ['type' => 'varchar', 'constraint' => 255],
-            'user_id'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true], // Only for successful logins
+            'user_id'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true],
             'date'       => ['type' => 'datetime'],
             'success'    => ['type' => 'tinyint', 'constraint' => 1],
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addKey(['id_type', 'identifier']);
         $this->forge->addKey('user_id');
-        // NOTE: Do NOT delete the user_id or identifier when the user is deleted for security audits
         $this->createTable($this->tables['token_logins']);
 
-        /*
-         * Auth Remember Tokens (remember-me) Table
-         * @see https://paragonie.com/blog/2015/04/secure-authentication-php-with-long-term-persistence
-         */
+        // Auth Remember Tokens (remember-me) Table
         $this->forge->addField([
             'id'              => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'selector'        => ['type' => 'varchar', 'constraint' => 255],
@@ -142,7 +113,18 @@ class CreateAuthTables extends Migration
         $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', '', 'CASCADE');
         $this->createTable($this->tables['remember_tokens']);
 
-        // Groups Users Table
+        // Auth Groups Table (Paste the provided code here)
+        $this->forge->addField([
+            'id'          => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'name'        => ['type' => 'varchar', 'constraint' => 255, 'unique' => true],
+            'description' => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
+            'created_at'  => ['type' => 'datetime', 'null' => true],
+            'updated_at'  => ['type' => 'datetime', 'null' => true],
+        ]);
+        $this->forge->addPrimaryKey('id');
+        $this->createTable($this->tables['groups']);
+
+        // Groups Users Table (existing - adjust foreign key for the new groups table)
         $this->forge->addField([
             'id'         => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'user_id'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
@@ -150,8 +132,11 @@ class CreateAuthTables extends Migration
             'created_at' => ['type' => 'datetime', 'null' => false],
         ]);
         $this->forge->addPrimaryKey('id');
+        // This is the crucial part: ensure 'group' column links to 'name' in auth_groups
+        $this->forge->addForeignKey('group', $this->tables['groups'], 'name', '', 'CASCADE');
         $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', '', 'CASCADE');
-        $this->createTable($this->tables['groups_users']);
+        $this->forge->addUniqueKey(['user_id', 'group']);
+        $this->createTable($this->tables['auth_roups_users']);
 
         // Users Permissions Table
         $this->forge->addField([
@@ -165,8 +150,6 @@ class CreateAuthTables extends Migration
         $this->createTable($this->tables['permissions_users']);
     }
 
-    // --------------------------------------------------------------------
-
     public function down(): void
     {
         $this->db->disableForeignKeyChecks();
@@ -177,6 +160,7 @@ class CreateAuthTables extends Migration
         $this->forge->dropTable($this->tables['identities'], true);
         $this->forge->dropTable($this->tables['groups_users'], true);
         $this->forge->dropTable($this->tables['permissions_users'], true);
+        $this->forge->dropTable($this->tables['groups'], true); // Add this line to drop the groups table
         $this->forge->dropTable($this->tables['users'], true);
 
         $this->db->enableForeignKeyChecks();

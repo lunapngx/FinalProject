@@ -24,13 +24,14 @@ class Database extends Config
      *
      * @var array<string, mixed>
      */
+    // In app/Config/Database.php
     public array $default = [
         'DSN'      => '',
-        'hostname' => 'localhost', // Or your database host (e.g., '127.0.0.1')
-        'username' => 'root', // Your database username
-        'password' => '12345mem', // Your database password
-        'database' => 'shoppingsystem_db', // Ensure this matches your database name
-        'DBDriver' => 'MySQLi', // Or 'Postgre', 'SQLSRV', etc.
+        'hostname' => 'localhost',
+        'username' => 'root',
+        'password' => '12345mem',
+        'database' => 'shoppingsystem_db', // <-- CHANGE THIS LINE
+        'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,
         'DBDebug'  => true, // Keep true during development for debugging
