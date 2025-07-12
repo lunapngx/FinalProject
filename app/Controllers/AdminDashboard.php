@@ -2,9 +2,9 @@
 
 use App\Controllers\BaseController;
 use App\Models\Order;
-use App\Models\UserModel; // Assuming you have UserModel for customers
-use App\Models\ProductModel; // Assuming you have ProductModel for products
-use App\Models\AdminModel; // New AdminModel
+use App\Models\UserModel;
+use App\Models\ProductModel;
+use App\Models\AdminModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 class AdminDashboard extends BaseController
@@ -22,13 +22,12 @@ class AdminDashboard extends BaseController
         $this->productModel = new ProductModel();
         $this->adminModel   = new AdminModel(); // Initialize AdminModel
         $this->session      = \Config\Services::session();
+        helper(['form', 'url']);
     }
 
     public function index()
     {
-        // Fetching Data for Dashboard Cards
         $totalSales     = $this->orderModel->selectSum('total_amount')->first()['total_amount'] ?? 0;
-        // For weekly orders, you would query orders from the last 7 days. This is a placeholder.
         $weeklyOrders   = $this->orderModel->where('created_at >=', date('Y-m-d H:i:s', strtotime('-7 days')))->countAllResults();
         $customersCount = $this->userModel->countAllResults();
         $productsCount  = $this->productModel->countAllResults();
@@ -73,7 +72,6 @@ class AdminDashboard extends BaseController
                 return redirect()->to('/admin/products');
             } else {
                 $data['validation'] = $this->validator;
-                $this->session->setFlashdata('error', 'Product addition failed.');
             }
         }
         return view('Admin/add_product', $data);
@@ -81,13 +79,19 @@ class AdminDashboard extends BaseController
 
     public function editProduct($id = null)
     {
-        $data['title']   = 'Edit Product';
-        $product = $this->productModel->find($id);
-
-        if (!$product) {
-            throw new PageNotFoundException('Product not found.');
+        if ($id === null) {
+            return redirect()->to('/admin/products')->with('error', 'Invalid product ID.');
         }
-        $data['product'] = $product;
+
+        $product = $this->productModel->find($id);
+        if (!$product) {
+            throw new PageNotFoundException('Product not found for ID: ' . $id);
+        }
+
+        $data = [
+            'title'   => 'Edit Product',
+            'product' => $product,
+        ];
 
         if ($this->request->getMethod() === 'post') {
             $rules = [
@@ -104,27 +108,29 @@ class AdminDashboard extends BaseController
                     'description' => $this->request->getPost('description'),
                     'stock'       => $this->request->getPost('stock'),
                 ]);
-                $this->session->setFlashdata('success', 'Product updated successfully.');
-                return redirect()->to('/admin/products');
+                return redirect()->to('/admin/products')->with('success', 'Product updated successfully.');
             } else {
                 $data['validation'] = $this->validator;
-                $this->session->setFlashdata('error', 'Product update failed.');
             }
         }
+
         return view('Admin/edit_product', $data);
     }
+
 
     public function deleteProduct($id = null)
     {
         if ($id === null) {
-            $this->session->setFlashdata('error', 'Invalid product ID.');
-            return redirect()->to('/admin/products');
+            return redirect()->to('/admin/products')->with('error', 'Invalid product ID.');
         }
 
-        $this->productModel->delete($id);
-        $this->session->setFlashdata('success', 'Product deleted successfully.');
-        return redirect()->to('/admin/products');
+        if ($this->productModel->delete($id)) {
+            return redirect()->to('/admin/products')->with('success', 'Product deleted successfully.');
+        } else {
+            return redirect()->to('/admin/products')->with('error', 'Failed to delete product.');
+        }
     }
+
 
     public function orders()
     {
@@ -142,27 +148,22 @@ class AdminDashboard extends BaseController
 
     public function account()
     {
-        $data['title'] = 'Admin Account';
-        $adminId = $this->session->get('userId'); // Get logged-in admin's user ID from session
-        $adminRole = $this->session->get('role'); // Get logged-in admin's role from session
+        $adminId = $this->session->get('user_id');
 
-        // Ensure the logged-in user is an admin
-        if (!$adminId || $adminRole !== 'admin') {
-            // Redirect to login or show an unauthorized message
-            $this->session->setFlashdata('error', 'Unauthorized access to admin account.');
-            return redirect()->to('/login'); // Adjust this path as per your routing
+        if (!$adminId) {
+            return redirect()->to('/login')->with('error', 'You must be logged in to view this page.');
         }
+        $admin = $this->adminModel->find($adminId);
 
-        // Fetch admin user details using the AdminModel
-        $adminUser = $this->adminModel->find($adminId);
-
-        if (!$adminUser) {
-            // Handle case where admin user is not found (e.g., deleted)
-            $this->session->setFlashdata('error', 'Admin account not found.');
-            return redirect()->to('/login'); // Adjust this path as per your routing
+        if (!$admin) {
+            return redirect()->to('/admin/dashboard')->with('error', 'Admin user not found.');
         }
+        $data = [
+            'title' => 'Admin Account',
+            'admin' => $admin,
+        ];
 
-        $data['admin'] = $adminUser; // Pass the full admin user object to the view
-        return view('Admin/adminaccount', $data); // Assuming adminaccount.php exists for displaying admin details
+        return view('Admin/adminaccount', $data);
     }
+
 }

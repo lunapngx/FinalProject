@@ -12,30 +12,33 @@ class UserModel extends Model
     protected $useAutoIncrement = true;
 
     protected $returnType = 'array';
-    protected $useSoftDeletes = true; // Your migration has 'deleted_at', so this should be true
+    protected $useSoftDeletes = true;
 
-    // Make sure these fields match your database columns
-    // ...
     protected $allowedFields = [
         'username',
         'email',
-        'password_hash', // Changed from 'password'
+        'password_hash',
         'role',
         'status',
         'active',
         'fullname',
         'last_active',
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
-    // Dates
     protected $useTimestamps = true;
     protected $dateFormat = 'datetime';
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
     protected $deletedField = 'deleted_at';
 
-    // Validation
-    protected $validationRules = [];
+    protected $validationRules = [
+        'email' => 'required|valid_email|is_unique[users.email,id,{id}]',
+        'username' => 'permit_empty|min_length[3]|is_unique[users.username,id,{id}]',
+        'password_hash' => 'required',
+    ];
     protected $validationMessages = [];
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
