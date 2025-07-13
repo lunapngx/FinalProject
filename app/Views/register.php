@@ -43,24 +43,22 @@
     <?php endif; ?>
 
     <!-- Inside your register view (e.g., app/Views/register.php) -->
-    <form action="<?= url_to('register') ?>" method="post">
-        <?= csrf_field() ?> <!-- THIS IS ESSENTIAL for CSRF protection -->
-
-        <label for="fullname">Full Name:</label>
-        <input type="text" name="fullname" id="fullname" value="<?= old('fullname') ?>" required>
-
+    <form action="<?= base_url('register') ?>" method="post">
+        <?= csrf_field() ?> <label for="fullname">Full Name:</label>
+        <input type="text" name="fullname" id="fullname" required>
+        <br>
         <label for="username">Username:</label>
-        <input type="text" name="username" id="username" value="<?= old('username') ?>" required>
-
+        <input type="text" name="username" id="username" required>
+        <br>
         <label for="email">Email:</label>
-        <input type="email" name="email" id="email" value="<?= old('email') ?>" required>
-
+        <input type="email" name="email" id="email" required>
+        <br>
         <label for="password">Password:</label>
         <input type="password" name="password" id="password" required>
-
-        <label for="password_confirm">Confirm Password:</label>
-        <input type="password" name="password_confirm" id="password_confirm" required>
-
+        <br>
+        <label for="pass_confirm">Confirm Password:</label>
+        <input type="password" name="pass_confirm" id="pass_confirm" required>
+        <br>
         <button type="submit">Register</button>
     </form>
 

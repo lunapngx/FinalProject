@@ -57,90 +57,87 @@ class AuthController extends BaseController
      * If a user is already logged in, they are redirected to their
      * respective dashboard (admin) or account page (regular user).
      *
+     * @param $user
      * @return \CodeIgniter\HTTP\RedirectResponse|string A redirect response if already logged in or on successful login,
      * otherwise, the login view string.
      */
-    public function login()
+    // In app/Controllers/AuthController.php
+
+    // app/Controllers/AuthController.php at line 66
+    public function login() // No arguments expected here
     {
-        log_message('debug', 'Login method accessed.');
+        helper(['form', 'url']); // Load form and URL helpers if not already loaded
 
-        // Check if the user is already logged in.
-        if (session()->get('isLoggedIn')) {
-            log_message('debug', 'User already logged in. Role: ' . session()->get('role') . '. Redirecting.');
-            // If logged in as admin, redirect to admin dashboard.
-            if (session()->get('role') === 'admin') {
-                return redirect()->to('/admin/dashboard');
-            }
-            // Otherwise, redirect to the previously intended URL or default account page.
-            return redirect()->to(session()->get('redirect_url') ?? '/account');
-        }
-
-        // Prepare data for the login view, including a potential redirect URL
-        // passed via GET parameter.
-        $data = ['redirect' => $this->request->getGet('redirect') ?? '/'];
-        log_message('debug', 'Login form prepared. Redirect URL: ' . $data['redirect']);
-
-        // Process the login form submission if the request method is POST.
+        // If the request is a POST, attempt to authenticate
         if ($this->request->getMethod() === 'post') {
-            log_message('debug', 'Login form submitted (POST request detected).');
-            $identifier = $this->request->getPost('identifier'); // Can be email or username
+            $rules = [
+                'email'    => 'required|valid_email',
+                'password' => 'required',
+            ];
+
+            $errors = [
+                'email' => [
+                    'required'    => 'Email is required.',
+                    'valid_email' => 'Please enter a valid email address.',
+                ],
+                'password' => [
+                    'required' => 'Password is required.',
+                ],
+            ];
+
+            if (! $this->validate($rules, $errors)) {
+                // Validation failed, return to login with errors
+                return view('login', [
+                    'validation' => $this->validator,
+                ]);
+            }
+
+            $email    = $this->request->getPost('email');
             $password = $this->request->getPost('password');
 
-            log_message('debug', 'Attempting login for identifier: "' . $identifier . '"');
+            $userModel = new UserModel(); // Instantiate your UserModel
+            $user      = $userModel->where('email', $email)->first(); // Find user by email
 
-            $userModel = new UserModel();
-            log_message('debug', 'UserModel instance created.');
+            if ($user) {
+                // User found, now verify password
+                if (password_verify($password, $user['password_hash'])) {
+                    // Password matches, check if user is verified (if you implemented this step)
+                    if (isset($user['is_verified']) && !$user['is_verified']) {
+                        return redirect()->back()->withInput()->with('error', 'Please verify your email address before logging in.');
+                    }
 
-            // Try to find the user by email first.
-            $user = $userModel->where('email', $identifier)->first();
-            log_message('debug', 'User search by email result: ' . ($user ? 'User found by email.' : 'User NOT found by email.'));
+                    // In AuthController.php's login() method after successful password_verify
+                    $ses_data = [
+                        'id'        => $user['id'],
+                        'fullname'  => $user['fullname'],
+                        'username'  => $user['username'],
+                        'email'     => $user['email'],
+                        'role'      => $user['role'],
+                        'isLoggedIn' => TRUE, // This is crucial
+                    ];
+                    $this->session->set($ses_data);
 
-            // If not found by email, try to find the user by username.
-            if (!$user) {
-                $user = $userModel->where('username', $identifier)->first();
-                log_message('debug', 'User search by username result: ' . ($user ? 'User found by username.' : 'User NOT found by username.'));
-            }
+                    // Redirect based on role or to a default dashboard
+                    if ($user['role'] === 'admin') {
+                        return redirect()->to('/admin/dashboard');
+                    } else {
+                        return redirect()->to('/home'); // Or customer dashboard
+                    }
 
-            // Verify if a user was found and if the provided password matches the stored hash.
-            if ($user && password_verify($password, $user['password_hash'])) {
-                log_message('debug', 'User found and password verified successfully. User ID: ' . $user['id']);
-                // Set essential session data for the logged-in user.
-                session()->set([
-                    'user_id'    => $user['id'],
-                    'user_name'  => $user['username'] ?? $user['email'], // Use username if available, otherwise email
-                    'user_email' => $user['email'],
-                    'isLoggedIn' => true,
-                    'role'       => $user['role'] ?? 'user' // Default role to 'user' if not explicitly set
-                ]);
-                log_message('debug', 'Session data set. Current session isLoggedIn: ' . (session()->get('isLoggedIn') ? 'true' : 'false') . ', Role: ' . session()->get('role'));
-                session()->setFlashdata('success', 'You have been successfully logged in.');
-
-                // Redirect based on the user's role.
-                if (($user['role'] ?? 'user') === 'admin') {
-                    log_message('debug', 'Redirecting admin to /admin/dashboard.');
-                    return redirect()->to('/admin/dashboard');
+                } else {
+                    // Invalid password
+                    session()->setFlashdata('error', 'Invalid Email or Password.');
+                    return redirect()->back()->withInput();
                 }
-
-                // Redirect to the intended URL after successful login.
-                log_message('debug', 'Redirecting user to: ' . $data['redirect']);
-                return redirect()->to($data['redirect']);
             } else {
-                // If login fails, set an error flash message and redirect back to the form
-                // with the previously entered input (except password) for convenience.
-                log_message('debug', 'Login failed: Invalid credentials or user not found. User object: ' . json_encode($user));
-                if ($user && !password_verify($password, $user['password_hash'])) {
-                    log_message('debug', 'Password verification failed for user: "' . $identifier . '"');
-                } else if (!$user) {
-                    log_message('debug', 'User not found in database for identifier: "' . $identifier . '"');
-                }
-
-                session()->setFlashdata('error', 'Invalid email/username or password.');
+                // User not found
+                session()->setFlashdata('error', 'Invalid Email or Password.');
                 return redirect()->back()->withInput();
             }
         }
-        // If not a POST request, display the login form.
-        log_message('debug', 'Displaying login form (GET request).');
-        return view('login', $data);
+
+        // If it's a GET request, just show the login form
+        return view('login');
     }
 
     /**
@@ -244,5 +241,22 @@ class AuthController extends BaseController
         // Redirect to the login page with a success message.
         log_message('debug', 'Session destroyed. Redirecting to /login.');
         return redirect()->to('/login')->with('success', 'You have been successfully logged out.');
+    }
+    // In app/Controllers/AuthController.php
+
+    public function verifyEmail($hash)
+    {
+        $userModel = new \App\Models\UserModel();
+        $user = $userModel->where('verification_hash', $hash)->first();
+
+        if ($user) {
+            $userModel->update($user['id'], [
+                'is_verified' => true,
+                'verification_hash' => null, // Clear the hash after verification
+            ]);
+            return redirect()->to('/login')->with('success', 'Email successfully verified! You can now log in.');
+        } else {
+            return redirect()->to('/login')->with('error', 'Invalid or expired verification link.');
+        }
     }
 }

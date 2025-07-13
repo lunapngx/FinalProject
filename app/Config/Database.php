@@ -26,23 +26,24 @@ class Database extends Config
      */
     // In app/Config/Database.php
     public array $default = [
-        'DSN'      => '',
-        'hostname' => 'localhost',
-        'username' => 'root',
-        'password' => '12345mem',
-        'database' => 'shoppingsystem_db', // <-- CHANGE THIS LINE
-        'DBDriver' => 'MySQLi',
-        'DBPrefix' => '',
-        'pConnect' => false,
-        'DBDebug'  => true, // Keep true during development for debugging
-        'charset'  => 'utf8',
-        'DBCollat' => 'utf8_general_ci',
-        'swapPre'  => '',
-        'encrypt'  => false,
-        'compress' => false,
-        'strictOn' => false,
-        'failover' => [],
-        'port'     => 3306, // Or your database port
+        'DSN'          => '',
+        'hostname'     => 'localhost',
+        'username'     => 'root',
+        'password'     => '',
+        'database'     => 'shoppingsystem_db',
+        'DBDriver'     => 'MySQLi',
+        'DBPrefix'     => '',
+        'pConnect'     => false,
+        'DBDebug'      => 'development', // In development, this is true. In production, false.
+        'charset'      => 'utf8',
+        'DBCollat'     => 'utf8_general_ci',
+        'swapPre'      => '',
+        'encrypt'      => false,
+        'compress'     => false,
+        'strictOn'     => false,
+        'failover'     => [],
+        'port'         => 3306,
+        'persistent'   => false,
     ];
 
     //    /**
