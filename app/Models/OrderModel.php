@@ -4,24 +4,22 @@ use CodeIgniter\Model;
 
 class OrderModel extends Model
 {
-    protected $table = 'orders'; // Replace 'orders' with your actual table name
-    protected $primaryKey = 'id'; // Replace 'id' with your actual primary key
+    protected $table = 'orders'; // <--- IMPORTANT: Replace 'orders' with your actual orders table name
+    protected $primaryKey = 'id'; // <--- IMPORTANT: Replace 'id' with your actual primary key
 
     protected $useAutoIncrement = true;
-
-    protected $returnType     = 'array'; // or 'object'
+    protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['column1', 'column2', /* ... other columns */]; // Add your table columns here
+    // Add all column names from your 'orders' table that you intend to interact with
+    protected $allowedFields = [
+        // Example: 'user_id', 'product_id', 'quantity', 'total_amount', 'status', 'order_date'
+    ];
 
-    // If you have timestamps
-    protected $useTimestamps = false;
-    // protected $createdField  = 'created_at';
-    // protected $updatedField  = 'updated_at';
-    // protected $deletedField  = 'deleted_at';
+    protected $useTimestamps = true; // Set to true if you have created_at/updated_at columns
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
-    // Validation rules (optional)
-    // protected $validationRules    = [];
-    // protected $validationMessages = [];
-    // protected $skipValidation     = false;
+    // Add any other model properties or methods as needed for your OrderModel
 }

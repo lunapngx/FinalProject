@@ -83,7 +83,8 @@ $routes->group('admin', ['filter' => 'adminAuth'], function($routes){ // Ensure 
     $routes->get('orders', 'AdminController::orders', ['as' => 'admin_orders']);
     $routes->get('sales-report', 'AdminController::sales_report', ['as' => 'admin_sales_report']);
     $routes->get('products/add', 'AdminController::add_product');
-    $routes->match(['GET', 'POST'], 'products/edit/(:num)', 'AdminController::edit_product/$1');
+    $routes->match(['GET', 'POST'], 'products/add', 'AdminController::add_product', ['as' => 'admin_add_product']);
+    $routes->match(['GET', 'POST'], 'products/edit/(:num)', 'AdminController::edit_product/$1', ['as' => 'admin_edit_product']);
     $routes->get('products/delete/(:num)', 'AdminController::delete_product/$1', ['as' => 'admin_products_delete']);
 });
 // ====================================================================

@@ -43,23 +43,17 @@
         </div>
     <?php endif; ?>
 
-    <form action="<?= base_url('attemptLogin') ?>" method="post">
-        <?= csrf_field() ?>
-        <div class="form-group">
-            <label for="identifier">Email or Username</label>
-            <input type="text" name="identifier" id="identifier" class="form-control" value="<?= old('identifier') ?>" required autofocus>
-            <?php if (isset($validation) && $validation->hasError('identifier')) : ?>
-                <div class="text-danger mt-1"><?= $validation->getError('identifier') ?></div>
-            <?php endif; ?>
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control" required>
-            <?php if (isset($validation) && $validation->hasError('password')) : ?>
-                <div class="text-danger mt-1"><?= $validation->getError('password') ?></div>
-            <?php endif; ?>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Login</button>
+    <!-- Inside your login view (e.g., app/Views/login.php) -->
+    <form action="<?= url_to('login') ?>" method="post">
+        <?= csrf_field() ?> <!-- THIS IS ESSENTIAL for CSRF protection -->
+
+        <label for="identifier">Email or Username:</label>
+        <input type="text" name="identifier" id="identifier" value="<?= old('identifier') ?>" required>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required>
+
+        <button type="submit">Login</button>
     </form>
 
     <p class="text-center mt-3">
