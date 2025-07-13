@@ -31,29 +31,50 @@
 <div class="login-container">
     <h2 class="text-center mb-4">Login</h2>
 
-    <?php if (session()->getFlashdata('error')) : ?>
-        <div class="alert alert-danger text-center">
+    <?php if (session()->getFlashdata('error')): ?>
+        <div class="alert alert-danger" role="alert">
             <?= session()->getFlashdata('error') ?>
         </div>
     <?php endif; ?>
 
-    <?php if (session()->getFlashdata('success')) : ?>
-        <div class="alert alert-success text-center">
-            <?= session()->getFlashdata('success') ?>
+    <?php if (isset($validation)): ?>
+        <div class="alert alert-danger" role="alert">
+            <?= $validation->listErrors() ?>
         </div>
     <?php endif; ?>
 
-    <!-- Inside your login view (e.g., app/Views/login.php) -->
-    <form action="<?= url_to('login') ?>" method="post">
-        <?= csrf_field() ?> <!-- THIS IS ESSENTIAL for CSRF protection -->
+    <?php if (session()->getFlashdata('error')): ?>
+        <div class="alert alert-danger" role="alert">
+            <?= session()->getFlashdata('error') ?>
+        </div>
+    <?php endif; ?>
 
-        <label for="identifier">Email or Username:</label>
-        <input type="text" name="identifier" id="identifier" value="<?= old('identifier') ?>" required>
+    <?php if (isset($validation)): ?>
+        <div class="alert alert-danger" role="alert">
+            <?= $validation->listErrors() ?>
+        </div>
+    <?php endif; ?>
 
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required>
+    <form action="/login" method="post">
+        <?= csrf_field() ?> <button type="submit">Submit</button>
 
-        <button type="submit">Login</button>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" class="form-control" value="<?= old('email') ?>">
+            <?php if (isset($validation) && $validation->hasError('email')): ?>
+                <div class="text-danger"><?= $validation->getError('email') ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" class="form-control">
+            <?php if (isset($validation) && $validation->hasError('password')): ?>
+                <div class="text-danger"><?= $validation->getError('password') ?></div>
+            <?php endif; ?>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
     </form>
 
     <p class="text-center mt-3">

@@ -44,7 +44,9 @@
 
     <!-- Inside your register view (e.g., app/Views/register.php) -->
     <form action="<?= base_url('register') ?>" method="post">
-        <?= csrf_field() ?> <label for="fullname">Full Name:</label>
+        <?= csrf_field() ?> <button type="submit">Submit</button>
+
+        <label for="fullname">Full Name:</label>
         <input type="text" name="fullname" id="fullname" required>
         <br>
         <label for="username">Username:</label>

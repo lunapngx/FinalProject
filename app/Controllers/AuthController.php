@@ -85,11 +85,14 @@ class AuthController extends BaseController
                 ],
             ];
 
-            if (! $this->validate($rules, $errors)) {
-                // Validation failed, return to login with errors
-                return view('login', [
-                    'validation' => $this->validator,
-                ]);
+            if ($this->validate([
+                'email'    => 'required|valid_email',
+                'password' => 'required|min_length[8]|max_length[255]',
+            ])) {
+                // ... login logic
+            } else {
+                $data['validation'] = $this->validator;
+                return view('login', $data);
             }
 
             $email    = $this->request->getPost('email');
@@ -195,7 +198,7 @@ class AuthController extends BaseController
                         'email'         => $this->request->getPost('email'),
                         'password_hash' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT), // Hash the password
                         'role'          => 'user', // Assign 'user' as the default role for new registrations
-                        'active'        => 1,      // Mark the user as active immediately upon registration
+                        'is_verified'   => 0,      // New users are not verified initially (if email verification is used)
                         'status'        => 'active', // Set user status to 'active'
                     ];
                     log_message('debug', 'User data prepared for saving: ' . json_encode($userData));

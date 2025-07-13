@@ -29,12 +29,12 @@ class Database extends Config
         'DSN'          => '',
         'hostname'     => 'localhost',
         'username'     => 'root',
-        'password'     => '',
+        'password'     => '12345mem',
         'database'     => 'shoppingsystem_db',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
         'pConnect'     => false,
-        'DBDebug'      => 'development', // In development, this is true. In production, false.
+        'DBDebug'      => 'true', // In development, this is true. In production, false.
         'charset'      => 'utf8',
         'DBCollat'     => 'utf8_general_ci',
         'swapPre'      => '',
