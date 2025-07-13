@@ -31,19 +31,20 @@
 <div class="login-container">
     <h2 class="text-center mb-4">Login</h2>
 
-    <?php if (session()->getFlashdata('msg')) : ?>
+    <?php if (session()->getFlashdata('error')) : ?>
         <div class="alert alert-danger text-center">
-            <?= session()->getFlashdata('msg') ?>
+            <?= session()->getFlashdata('error') ?>
         </div>
     <?php endif; ?>
 
-    <?php if (session()->getFlashdata('msg_success')) : ?>
+    <?php if (session()->getFlashdata('success')) : ?>
         <div class="alert alert-success text-center">
-            <?= session()->getFlashdata('msg_success') ?>
+            <?= session()->getFlashdata('success') ?>
         </div>
     <?php endif; ?>
 
     <form action="<?= base_url('attemptLogin') ?>" method="post">
+        <?= csrf_field() ?>
         <div class="form-group">
             <label for="identifier">Email or Username</label>
             <input type="text" name="identifier" id="identifier" class="form-control" value="<?= old('identifier') ?>" required autofocus>

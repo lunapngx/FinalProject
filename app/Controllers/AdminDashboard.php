@@ -18,7 +18,8 @@ class AdminDashboard extends BaseController
 
     public function index()
     {
-        // You can load dashboard data here, e.g., stats
+        $orderModel = new OrderModel();
+
         $data = [
             'total_products' => (new ProductModel())->countAllResults(), // Now uses the aliased class
             'total_orders' => (new OrderModel())->countAllResults(), // Now uses the aliased class

@@ -31,37 +31,53 @@
 <div class="register-container">
     <h2 class="text-center mb-4">Register</h2>
 
-    <?php if (isset($validation)) : ?>
-        <div class="alert alert-danger">
-            <?= $validation->listErrors() ?>
+    <?php if (session()->getFlashdata('success')) : ?>
+        <div class="alert alert-success text-center">
+            <?= session()->getFlashdata('success') ?>
         </div>
     <?php endif; ?>
-    <?php if (session()->getFlashdata('msg_success')) : ?>
-        <div class="alert alert-success text-center">
-            <?= session()->getFlashdata('msg_success') ?>
+    <?php if (session()->getFlashdata('error')) : ?>
+        <div class="alert alert-danger text-center">
+            <?= session()->getFlashdata('error') ?>
         </div>
     <?php endif; ?>
 
     <form action="<?= base_url('attemptRegister') ?>" method="post">
+        <?= csrf_field() ?>
         <div class="form-group">
             <label for="fullname">Full Name</label>
             <input type="text" name="fullname" id="fullname" class="form-control" value="<?= old('fullname') ?>" required>
+            <?php if (isset($validation) && $validation->hasError('fullname')) : ?>
+                <div class="text-danger mt-1"><?= $validation->getError('fullname') ?></div>
+            <?php endif; ?>
         </div>
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" name="username" id="username" class="form-control" value="<?= old('username') ?>" required>
+            <?php if (isset($validation) && $validation->hasError('username')) : ?>
+                <div class="text-danger mt-1"><?= $validation->getError('username') ?></div>
+            <?php endif; ?>
         </div>
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" name="email" id="email" class="form-control" value="<?= old('email') ?>" required>
+            <?php if (isset($validation) && $validation->hasError('email')) : ?>
+                <div class="text-danger mt-1"><?= $validation->getError('email') ?></div>
+            <?php endif; ?>
         </div>
         <div class="form-group">
             <label for="password">Password</label>
             <input type="password" name="password" id="password" class="form-control" required>
+            <?php if (isset($validation) && $validation->hasError('password')) : ?>
+                <div class="text-danger mt-1"><?= $validation->getError('password') ?></div>
+            <?php endif; ?>
         </div>
         <div class="form-group">
             <label for="password_confirm">Confirm Password</label>
             <input type="password" name="password_confirm" id="password_confirm" class="form-control" required>
+            <?php if (isset($validation) && $validation->hasError('password_confirm')) : ?>
+                <div class="text-danger mt-1"><?= $validation->getError('password_confirm') ?></div>
+            <?php endif; ?>
         </div>
         <button type="submit" class="btn btn-primary btn-block">Register</button>
     </form>

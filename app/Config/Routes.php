@@ -28,21 +28,24 @@ $routes->setAutoRoute(false); // Disable auto-routing for security
 $routes->get('/', 'Home::index', ['as' => 'home']);
 $routes->get('/about', 'Home::about', ['as' => 'about']);
 
+// app/Config/Routes.php
+
+// ... (existing code) ...
+
 // ====================================================================
 // UNIFIED AUTHENTICATION ROUTES - START
 // All login, registration, and logout now go through AuthController
 // ====================================================================
 $routes->get('login', 'AuthController::login', ['as' => 'login']);
-$routes->post('attemptLogin', 'AuthController::attemptLogin', ['as' => 'attemptLogin']); // Note: Action name for POST
+$routes->post('attemptLogin', 'AuthController::login', ['as' => 'attemptLogin']); // Change this line
 $routes->get('register', 'AuthController::register', ['as' => 'register']);
-$routes->post('attemptRegister', 'AuthController::attemptRegister', ['as' => 'attemptRegister']); // Note: Action name for POST
+$routes->post('attemptRegister', 'AuthController::register', ['as' => 'attemptRegister']); // Change this line
 $routes->get('logout', 'AuthController::logout', ['as' => 'logout']);
 
 // Redirecting old admin login/register URLs to the unified authentication forms
-// This ensures any existing links to admin/login or admin/register still work
 $routes->get('admin/login', 'AuthController::login', ['as' => 'admin_login_redirect']);
 $routes->get('admin/register', 'AuthController::register', ['as' => 'admin_register_redirect']);
-$routes->get('admin/logout', 'AuthController::logout', ['as' => 'admin_logout']); // Admin logout also unified
+$routes->get('admin/logout', 'AuthController::logout', ['as' => 'admin_logout']);
 // ====================================================================
 // UNIFIED AUTHENTICATION ROUTES - END
 // ====================================================================
@@ -72,15 +75,15 @@ $routes->group('', ['filter' => 'auth'], function($routes) { // Assuming 'auth' 
 // ====================================================================
 // ADMIN ROUTES - START
 // ====================================================================
-$routes->group('admin', ['filter' => 'adminAuth'], function ($routes) { // Ensure 'adminAuth' filter is correctly configured in app/Config/Filters.php
+$routes->group('admin', ['filter' => 'adminAuth'], function($routes){ // Ensure 'adminAuth' filter is correctly configured in app/Config/Filters.php
     $routes->get('dashboard', 'AdminDashboard::index', ['as' => 'admin_dashboard']);
     $routes->get('/', 'AdminDashboard::index'); // Default for /admin
     $routes->get('account', 'AdminController::adminaccount', ['as' => 'admin_account']);
     $routes->get('products', 'AdminController::products', ['as' => 'admin_products']);
     $routes->get('orders', 'AdminController::orders', ['as' => 'admin_orders']);
     $routes->get('sales-report', 'AdminController::sales_report', ['as' => 'admin_sales_report']);
-    $routes->match(['get', 'post'], 'products/add', 'AdminController::add_product', ['as' => 'admin_products_add']);
-    $routes->match(['get', 'post'], 'products/edit/(:num)', 'AdminController::edit_product/$1', ['as' => 'admin_products_edit']);
+    $routes->get('products/add', 'AdminController::add_product');
+    $routes->match(['GET', 'POST'], 'products/edit/(:num)', 'AdminController::edit_product/$1');
     $routes->get('products/delete/(:num)', 'AdminController::delete_product/$1', ['as' => 'admin_products_delete']);
 });
 // ====================================================================
