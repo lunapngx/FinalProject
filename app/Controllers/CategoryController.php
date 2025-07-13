@@ -1,30 +1,26 @@
-<?php namespace App\Controllers; // Changed from App\Controllers\User
+<?php
 
-use App\Models\CategoryModel;
-use App\Models\ProductModel;
-use CodeIgniter\Controller; // Should be BaseController if extending it directly
-use CodeIgniter\Exceptions\PageNotFoundException;
+namespace App\Controllers; // Make sure this namespace matches your project structure
 
-// Changed to CategoryModel
-
-class CategoryController extends BaseController // Assuming you want to extend BaseController
+class CategoryController extends BaseController
 {
-    public function view(string $slug)
+    /**
+     * Loads the main categories page.
+     * You can fetch categories from a model here if needed.
+     */
+    public function index()
     {
-        $catModel = new CategoryModel();
-        $category = $catModel->where('slug', $slug)->first();
+        // Example: If you have a CategoryModel and want to fetch data
+        // $categoryModel = new \App\Models\CategoryModel();
+        // $data['categories'] = $categoryModel->findAll();
 
-        if (!$category) {
-            throw new PageNotFoundException('Category not found: ' . $slug);
-        }
-
-        $prodModel = new ProductModel();
-        $products  = $prodModel->where('category_id', $category['id'])->findAll();
-
-        return view('Category/index', [ // Assumed this view should be used for categories listing by slug
-            'category' => $category, // Changed 'Category' to 'category' (lowercase) for consistency
-            'products' => $products,
-            'title' => $category['name'], // Set title dynamically
-        ]);
+        // This line tells CodeIgniter to load the view file: app/Views/categories/index.php
+        return view('category/index' /*, $data*/); // Uncomment $data if you pass data
     }
+
+    // You can add other methods here, e.g., to display products within a specific category
+    // public function show($slug)
+    // {
+    //     // Logic to fetch a specific category and its products
+    // }
 }

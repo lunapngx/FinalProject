@@ -209,7 +209,7 @@
     // Remove item buttons
     removeButtons.forEach(btn => {
       btn.addEventListener('click', function() {
-        btn.closest('.Cart-item').remove();
+        btn.closest('.CartButton-item').remove();
       });
     });
   }
@@ -960,4 +960,465 @@
     });
   });
 
+  // Ensure the DOM is fully loaded before running script
+  document.addEventListener('DOMContentLoaded', function() {
+    const profileDropdownToggle = document.getElementById('profileDropdownToggle');
+    const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+
+    if (profileDropdownToggle && profileDropdownMenu) {
+      // Toggle the dropdown when the profile icon is clicked
+      profileDropdownToggle.addEventListener('click', function(event) {
+        event.stopPropagation(); // Prevent document click from immediately closing
+        profileDropdownMenu.classList.toggle('show');
+
+        // Update aria-expanded attribute for accessibility
+        const isExpanded = profileDropdownMenu.classList.contains('show');
+        profileDropdownToggle.setAttribute('aria-expanded', isExpanded);
+      });
+
+      // Close the dropdown if a click occurs outside of it
+      document.addEventListener('click', function(event) {
+        if (!profileDropdownMenu.contains(event.target) && !profileDropdownToggle.contains(event.target)) {
+          profileDropdownMenu.classList.remove('show');
+          profileDropdownToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Optional: Close dropdown if an item inside is clicked (and it's not a link that navigates)
+      profileDropdownMenu.addEventListener('click', function(event) {
+        // If the clicked element is a link, let it navigate. Otherwise, close the dropdown.
+        if (!event.target.closest('a')) {
+          profileDropdownMenu.classList.remove('show');
+          profileDropdownToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  });
+// js for my profile
+  document.addEventListener('DOMContentLoaded', function() {
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+    const contentSections = document.querySelectorAll('.content-section');
+    const profilePicture = document.getElementById('profilePicture');
+    const profilePictureInput = document.getElementById('profilePictureInput');
+    const photoModal = document.getElementById('photoModal');
+    const closeModal = document.getElementById('closeModal');
+    const addPhotoOption = document.getElementById('addPhotoOption');
+    const removePhotoOption = document.getElementById('removePhotoOption');
+    const defaultProfilePicture = "https://placehold.co/80x80/e0f2fe/1d4ed8?text=GR"; // Default image source
+
+    // For Account Settings (Personal Information)
+    const firstNameInput = document.getElementById('firstName');
+    const lastNameInput = document.getElementById('lastName');
+    const emailInput = document.getElementById('email');
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const saveChangesBtn = document.getElementById('saveChangesBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn'); // Added cancel button
+
+    // For Password Settings
+    const currentPasswordInput = document.getElementById('currentPassword');
+    const newPasswordInput = document.getElementById('newPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const editPasswordBtn = document.getElementById('editPasswordBtn');
+    const savePasswordBtn = document.getElementById('savePasswordBtn');
+    const cancelPasswordEditBtn = document.getElementById('cancelPasswordEditBtn');
+
+    // Function to hide all content sections
+    function hideAllContentSections() {
+      contentSections.forEach(section => {
+        section.classList.add('hidden');
+      });
+    }
+
+    // Function to deactivate all sidebar links
+    function deactivateAllSidebarLinks() {
+      sidebarLinks.forEach(link => {
+        link.classList.remove('active');
+      });
+    }
+
+    // Add click event listener to each sidebar link
+    sidebarLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent default anchor behavior
+
+        // Get the ID of the section to show
+        const targetSectionId = this.getAttribute('data-section-id');
+        const targetSection = document.getElementById(targetSectionId);
+
+        // Hide all sections and deactivate all links
+        hideAllContentSections();
+        deactivateAllSidebarLinks();
+
+        // Show the target section and activate the clicked link
+        if (targetSection) {
+          targetSection.classList.remove('hidden');
+        }
+        this.classList.add('active');
+
+        // Update URL hash without page reload
+        window.history.pushState(null, '', '#' + targetSectionId);
+      });
+    });
+
+    // Handle sub-section navigation (for "Track Order" and "View Details")
+    document.body.addEventListener('click', function(e) {
+      const trackOrderBtn = e.target.closest('[data-sub-section-target="trackOrder"]');
+      const viewDetailsBtn = e.target.closest('[data-sub-section-target="viewDetails"]');
+
+      if (trackOrderBtn) {
+        e.preventDefault();
+        const orderId = trackOrderBtn.getAttribute('data-order-id');
+        // Simulate fetching order data
+        const orderData = getOrderData(orderId); // A function you'd need to implement
+        if (orderData) {
+          populateTrackOrderSection(orderData);
+          hideAllContentSections();
+          document.getElementById('trackOrderSection').classList.remove('hidden');
+          window.history.pushState(null, '', '#trackOrderSection'); // Update hash for track order
+        }
+      } else if (viewDetailsBtn) {
+        e.preventDefault();
+        const orderId = viewDetailsBtn.getAttribute('data-order-id');
+        const orderData = getOrderData(orderId);
+        if (orderData) {
+          populateViewDetailsSection(orderData);
+          hideAllContentSections();
+          document.getElementById('viewDetailsSection').classList.remove('hidden');
+          window.history.pushState(null, '', '#viewDetailsSection'); // Update hash for view details
+        }
+      } else if (e.target.closest('[data-section-id="myOrders"]')) {
+        // Handle "Back to My Orders" button clicks within track/view sections
+        e.preventDefault();
+        hideAllContentSections();
+        document.getElementById('myOrders').classList.remove('hidden');
+        // Optionally, reactivate "My Orders" sidebar link
+        deactivateAllSidebarLinks();
+        document.querySelector('.sidebar-link[data-section-id="myOrders"]').classList.add('active');
+        window.history.pushState(null, '', '#myOrders'); // Update hash for my orders
+      } else if (e.target.closest('[data-section-id="accountSettings"]')) {
+        // Handle "Edit Profile" button click from "My Profile" section
+        e.preventDefault();
+        hideAllContentSections();
+        document.getElementById('accountSettings').classList.remove('hidden');
+        deactivateAllSidebarLinks();
+        document.querySelector('.sidebar-link[data-section-id="accountSettings"]').classList.add('active');
+        window.history.pushState(null, '', '#accountSettings'); // Update hash for account settings
+      }
+    });
+
+    // Event listeners for Account Settings buttons (Personal Information)
+    editProfileBtn.addEventListener('click', function() {
+      firstNameInput.disabled = false;
+      lastNameInput.disabled = false;
+      emailInput.disabled = false;
+      editProfileBtn.classList.add('hidden');
+      saveChangesBtn.classList.remove('hidden');
+      cancelEditBtn.classList.remove('hidden'); // Show cancel button
+    });
+
+    saveChangesBtn.addEventListener('click', function() {
+      // In a real application, you would send this data to your backend
+      console.log('Saving changes:', {
+        firstName: firstNameInput.value,
+        lastName: lastNameInput.value,
+        email: emailInput.value
+      });
+
+      // After saving, disable fields and switch buttons back
+      firstNameInput.disabled = true;
+      lastNameInput.disabled = true;
+      emailInput.disabled = true;
+      saveChangesBtn.classList.add('hidden');
+      cancelEditBtn.classList.add('hidden'); // Hide cancel button
+      editProfileBtn.classList.remove('hidden');
+      alert('Profile changes saved!'); // You might want a more subtle notification
+    });
+
+    cancelEditBtn.addEventListener('click', function() {
+      // Revert fields to their original values if needed (you'd need to store them)
+      // For now, just disable them and hide buttons
+      firstNameInput.disabled = true;
+      lastNameInput.disabled = true;
+      emailInput.disabled = true;
+      saveChangesBtn.classList.add('hidden');
+      cancelEditBtn.classList.add('hidden');
+      editProfileBtn.classList.remove('hidden');
+    });
+
+    // Start of Password Settings JavaScript (New addition)
+    // Function to set password inputs editable or disabled
+    function setPasswordInputsEditable(isEditable) {
+      currentPasswordInput.disabled = !isEditable;
+      newPasswordInput.disabled = !isEditable;
+      confirmPasswordInput.disabled = !isEditable;
+    }
+
+    // Initialize password inputs as disabled when the page loads
+    setPasswordInputsEditable(false);
+
+    // Event listener for Edit Password button
+    if (editPasswordBtn) {
+      editPasswordBtn.addEventListener('click', function() {
+        setPasswordInputsEditable(true); // Enable inputs
+        editPasswordBtn.classList.add('hidden'); // Hide Edit button
+        savePasswordBtn.classList.remove('hidden'); // Show Save button
+        cancelPasswordEditBtn.classList.remove('hidden'); // Show Cancel button
+      });
+    }
+
+    // Event listener for Save Changes (Password) button
+    if (savePasswordBtn) {
+      savePasswordBtn.addEventListener('click', function() {
+        // TODO: Implement actual save logic here
+        // Get values: currentPasswordInput.value, newPasswordInput.value, confirmPasswordInput.value
+        // You'll want to add validation here (e.g., newPassword matches confirmPassword, meets complexity requirements)
+        // Then, send data to backend (e.g., using fetch API)
+        console.log('Saving password changes...');
+
+        // For demonstration, let's assume success
+        alert('Password changes saved! (This is a placeholder alert)');
+
+        // After successful save, or on error, revert state
+        setPasswordInputsEditable(false);
+        editPasswordBtn.classList.remove('hidden');
+        savePasswordBtn.classList.add('hidden');
+        cancelPasswordEditBtn.classList.add('hidden');
+        // Clear password fields for security
+        currentPasswordInput.value = '';
+        newPasswordInput.value = '';
+        confirmPasswordInput.value = '';
+      });
+    }
+
+    // Event listener for Cancel (Password) button
+    if (cancelPasswordEditBtn) {
+      cancelPasswordEditBtn.addEventListener('click', function() {
+        // Revert inputs to original (disabled) state
+        setPasswordInputsEditable(false);
+        // Hide save and cancel buttons, show edit button
+        editPasswordBtn.classList.remove('hidden');
+        savePasswordBtn.classList.add('hidden');
+        cancelPasswordEditBtn.classList.add('hidden');
+        // Clear password fields
+        currentPasswordInput.value = '';
+        newPasswordInput.value = '';
+        confirmPasswordInput.value = '';
+        alert('Password changes cancelled.');
+      });
+    }
+    // End of Password Settings JavaScript
+
+
+    // Profile Picture Modal Logic (moved from inline script)
+    profilePicture.addEventListener('click', function() {
+      photoModal.style.display = 'flex'; // Use flex to center
+    });
+
+    profilePictureInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          profilePicture.src = e.target.result;
+          console.log('New image selected:', file.name);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+
+    closeModal.addEventListener('click', function() {
+      photoModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+      if (event.target == photoModal) {
+        photoModal.style.display = 'none';
+      }
+    });
+
+    addPhotoOption.addEventListener('click', function() {
+      profilePictureInput.click();
+      photoModal.style.display = 'none';
+    });
+
+    removePhotoOption.addEventListener('click', function() {
+      profilePicture.src = defaultProfilePicture;
+      console.log('Profile picture removed.');
+      photoModal.style.display = 'none';
+    });
+    // End Profile Picture Modal Logic
+
+
+    // Dummy data and functions for demonstration (you would replace these with actual data fetching)
+    function getOrderData(orderId) {
+      const orders = {
+        'ORD-2024-1278': {
+          id: 'ORD-2024-1278',
+          date: 'Feb 20, 2025',
+          status: 'Processing',
+          itemsCount: 3,
+          total: '$789.99',
+          images: [
+            'https://placehold.co/60x60/fecaca/dc2626?text=Bag',
+            'https://placehold.co/60x60/fecaca/dc2626?text=Chair',
+            'https://placehold.co/60x60/fecaca/dc2626?text=Glasses'
+          ],
+          timeline: [
+            { date: 'Feb 20, 2025', time: '10:00 AM', status: 'Order Placed', icon: 'fa-clipboard-list' },
+            { date: 'Feb 20, 2025', time: '11:30 AM', status: 'Processing at Warehouse', icon: 'fa-warehouse' },
+            { date: 'Feb 20, 2025', time: '01:00 PM', status: 'Payment Confirmed', icon: 'fa-money-check-alt' }
+          ],
+          paymentMethod: 'Credit Card (Visa ending in 1234)',
+          shippingMethod: 'Standard Shipping',
+          products: [
+            { name: 'Elegant Leather Handbag', qty: 1, price: '$250.00', image: 'https://placehold.co/60x60/fecaca/dc2626?text=Bag' },
+            { name: 'Ergonomic Office Chair', qty: 1, price: '$400.00', image: 'https://placehold.co/60x60/fecaca/dc2626?text=Chair' },
+            { name: 'Stylish Blue Light Glasses', qty: 1, price: '$79.99', image: 'https://placehold.co/60x60/fecaca/dc2626?text=Glasses' }
+          ],
+          subtotal: '$729.99',
+          shipping: '$30.00',
+          tax: '$30.00',
+          address: '123 Main Street, Apt 4B, Springfield, IL 62701, United States'
+        },
+        'ORD-2024-1265': {
+          id: 'ORD-2024-1265',
+          date: 'Feb 15, 2025',
+          status: 'Shipped',
+          itemsCount: 2,
+          total: '$459.99',
+          images: [
+            'https://placehold.co/60x60/fecaca/dc2626?text=Hoodie',
+            'https://placehold.co/60x60/fecaca/dc2626?text=Shoes'
+          ],
+          timeline: [
+            { date: 'Feb 15, 2025', time: '09:00 AM', status: 'Order Placed', icon: 'fa-clipboard-list' },
+            { date: 'Feb 15, 2025', time: '10:00 AM', status: 'Shipped from Warehouse', icon: 'fa-truck' },
+            { date: 'Feb 16, 2025', time: '08:00 AM', status: 'Out for Delivery', icon: 'fa-shipping-fast' }
+          ],
+          paymentMethod: 'PayPal',
+          shippingMethod: 'Express Shipping',
+          products: [
+            { name: 'Comfortable Cotton Hoodie', qty: 1, price: '$80.00', image: 'https://placehold.co/60x60/fecaca/dc2626?text=Hoodie' },
+            { name: 'Running Shoes', qty: 1, price: '$350.00', image: 'https://placehold.co/60x60/fecaca/dc2626?text=Shoes' }
+          ],
+          subtotal: '$430.00',
+          shipping: '$20.00',
+          tax: '$9.99',
+          address: '456 Oak Avenue, Apt 10C, Metropolis, NY 10001, United States'
+        },
+        'ORD-2024-1252': {
+          id: 'ORD-2024-1252',
+          date: 'Feb 10, 2025',
+          status: 'Delivered',
+          itemsCount: 1,
+          total: '$129.99',
+          images: [
+            'https://placehold.co/60x60/fecaca/dc2626?text=Watch'
+          ],
+          timeline: [
+            { date: 'Feb 10, 2025', time: '09:00 AM', status: 'Order Placed', icon: 'fa-clipboard-list' },
+            { date: 'Feb 10, 2025', time: '10:00 AM', status: 'Shipped from Warehouse', icon: 'fa-truck' },
+            { date: 'Feb 12, 2025', time: '02:00 PM', status: 'Delivered', icon: 'fa-check-circle' }
+          ],
+          paymentMethod: 'Google Pay',
+          shippingMethod: 'Standard Shipping',
+          products: [
+            { name: 'Smart Watch', qty: 1, price: '$120.00', image: 'https://placehold.co/60x60/fecaca/dc2626?text=Watch' }
+          ],
+          subtotal: '$120.00',
+          shipping: '$5.00',
+          tax: '$4.99',
+          address: '789 Pine Lane, Unit 2A, Gotham, CA 90210, United States'
+        }
+      };
+      return orders[orderId];
+    }
+
+    function populateTrackOrderSection(order) {
+      document.getElementById('trackOrderId').textContent = `Order ID: #${order.id}`;
+      document.getElementById('trackOrderDate').textContent = order.date;
+      document.getElementById('trackOrderStatus').textContent = order.status;
+
+      const trackOrderImagesContainer = document.getElementById('trackOrderImages');
+      trackOrderImagesContainer.innerHTML = '';
+      order.images.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Product Image';
+        img.classList.add('rounded-md', 'w-16', 'h-16', 'object-cover');
+        trackOrderImagesContainer.appendChild(img);
+      });
+
+      const trackOrderTimelineContainer = document.getElementById('trackOrderTimeline');
+      trackOrderTimelineContainer.innerHTML = '';
+      order.timeline.forEach((event, index) => {
+        const isLast = index === order.timeline.length - 1;
+        trackOrderTimelineContainer.innerHTML += `
+                <div class="flex items-start">
+                    <div class="flex flex-col items-center mr-4">
+                        <div class="w-8 h-8 flex items-center justify-center rounded-full ${isLast ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'}">
+                            <i class="fas ${event.icon}"></i>
+                        </div>
+                        ${!isLast ? '<div class="w-px bg-gray-300 h-10"></div>' : ''}
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-800">${event.status}</p>
+                        <p class="text-sm text-gray-500">${event.date} at ${event.time}</p>
+                    </div>
+                </div>
+            `;
+      });
+    }
+
+    function populateViewDetailsSection(order) {
+      document.getElementById('viewDetailsPaymentMethod').textContent = order.paymentMethod;
+      document.getElementById('viewDetailsShippingMethod').textContent = order.shippingMethod;
+      document.getElementById('viewDetailsItemCount').textContent = order.itemsCount;
+
+      const viewDetailsItemsContainer = document.getElementById('viewDetailsItems');
+      viewDetailsItemsContainer.innerHTML = '';
+      order.products.forEach(product => {
+        viewDetailsItemsContainer.innerHTML += `
+                <div class="flex items-center space-x-4">
+                    <img src="${product.image}" alt="${product.name}" class="w-16 h-16 rounded-md object-cover flex-shrink-0">
+                    <div>
+                        <p class="font-semibold text-gray-800">${product.name}</p>
+                        <p class="text-sm text-gray-600">Qty: ${product.qty} x $${parseFloat(product.price.replace('$', '')).toFixed(2)}</p>
+                    </div>
+                    <span class="ml-auto font-semibold text-gray-800">$${(parseFloat(product.price.replace('$', '')) * product.qty).toFixed(2)}</span>
+                </div>
+            `;
+      });
+
+      document.getElementById('viewDetailsSubtotal').textContent = order.subtotal;
+      document.getElementById('viewDetailsShipping').textContent = order.shipping;
+      document.getElementById('viewDetailsTax').textContent = order.tax;
+      document.getElementById('viewDetailsTotal').textContent = order.total;
+      document.getElementById('viewDetailsShippingAddress').innerHTML = order.address.replace(/, /g, '<br>');
+    }
+
+    // New: Handle initial section display based on URL hash
+    const hash = window.location.hash.substring(1); // Get hash without '#'
+
+    if (hash) {
+      const targetSection = document.getElementById(hash);
+      if (targetSection) {
+        hideAllContentSections(); // Hide all other sections
+        deactivateAllSidebarLinks(); // Deactivate all sidebar links
+        targetSection.classList.remove('hidden'); // Show the target section
+
+        // Activate the corresponding sidebar link if it exists
+        const correspondingLink = document.querySelector(`.sidebar-link[data-section-id="${hash}"]`);
+        if (correspondingLink) {
+          correspondingLink.classList.add('active');
+        }
+      }
+    } else {
+      // If no hash, default to 'myProfileContent'
+      hideAllContentSections();
+      document.getElementById('myProfileContent').classList.remove('hidden');
+      document.querySelector('.sidebar-link[data-section-id="myProfileContent"]').classList.add('active');
+    }
+  });
 })();

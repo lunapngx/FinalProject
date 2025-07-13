@@ -24,7 +24,7 @@ class Auth extends BaseController
             $user = $userModel->where('email', $email)->first();
 
             if ($user && password_verify($password, $user['password_hash'])) {
-                // User is authenticated
+                // Wishlist is authenticated
                 session()->set('user_id', $user['id']);
                 session()->setFlashdata('success', 'You have been successfully logged in.');
 

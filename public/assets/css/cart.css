@@ -1,3 +1,5 @@
+/* CART PAGE STYLES */
+
 .cart-container {
     max-width: 1200px;
     margin: 40px auto;
@@ -8,13 +10,13 @@
 }
 .cart-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr; /* CartController items on left, summary on right */
+    grid-template-columns: 2fr 1fr;
     gap: 30px;
 }
 .cart-items {
     border: 1px solid #ddd;
     border-radius: 5px;
-    overflow: hidden; /* For table border radius */
+    overflow: hidden;
 }
 .cart-items table {
     width: 100%;
@@ -51,7 +53,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     overflow: hidden;
-    width: 120px; /* Adjust width as needed */
+    width: 120px;
 }
 .quantity-controls button {
     background-color: #f0f0f0;
@@ -65,11 +67,11 @@
     text-align: center;
     width: 40px;
     padding: 8px 0;
-    -moz-appearance: textfield; /* Hide arrows in Firefox */
+    -moz-appearance: textfield;
 }
 .quantity-controls input::-webkit-outer-spin-button,
 .quantity-controls input::-webkit-inner-spin-button {
-    -webkit-appearance: none; /* Hide arrows in Chrome, Safari */
+    -webkit-appearance: none;
     margin: 0;
 }
 .cart-actions {
@@ -113,37 +115,35 @@
 .order-summary .shipping-options input[type="radio"] {
     margin-right: 8px;
 }
-.order-summary .btn-proceed, .order-summary .btn-continue {
+.order-summary .btn-proceed,
+.order-summary .btn-continue {
     width: 100%;
     padding: 12px;
     margin-top: 15px;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    cursor: pointer;
 }
 .order-summary .btn-proceed {
-    background-color: #007bff; /* Bootstrap primary */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    background-color: #007bff;
 }
 .order-summary .btn-continue {
-    background-color: #6c757d; /* Bootstrap secondary */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    background-color: #6c757d;
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 992px) {
     .cart-grid {
-        grid-template-columns: 1fr; /* Stack columns vertically on smaller screens */
+        grid-template-columns: 1fr;
     }
     .cart-items {
-        margin-bottom: 30px; /* Space between stacked sections */
+        margin-bottom: 30px;
     }
 }
 @media (max-width: 576px) {
-    .cart-items th, .cart-items td {
+    .cart-items th,
+    .cart-items td {
         padding: 8px 10px;
         font-size: 0.9em;
     }
