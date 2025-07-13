@@ -46,26 +46,27 @@
                             </div>
                             <div class="dropdown-body">
                                 <?php if (auth()->loggedIn()): ?>
-                                <a class="dropdown-item d-flex align-items-center" href="<?= url_to('account_profile') ?>">
-                                    <i class="bi bi-person-circle me-2"></i>
-                                    <span>My Profile</span>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="<?= url_to('account_orders') ?>">
-                                    <i class="bi bi-bag-check me-2"></i>
-                                    <span>My Orders</span>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="<?= url_to('account_profile') ?>#wishlist">
-                                    <i class="bi bi-heart me-2"></i>
-                                    <span>My Wishlist</span>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="<?= url_to('account_settings') ?>">
-                                    <i class="bi bi-gear me-2"></i>
-                                    <span>Settings</span>
-                                    <?php endif; ?>
+                                    <a class="dropdown-item d-flex align-items-center" href="<?= url_to('account_profile') ?>">
+                                        <i class="bi bi-person-circle me-2"></i>
+                                        <span>My Profile</span>
+                                    </a>
+                                    <a class="dropdown-item d-flex align-items-center" href="<?= url_to('account_orders') ?>">
+                                        <i class="bi bi-bag-check me-2"></i>
+                                        <span>My Orders</span>
+                                    </a>
+                                    <a class="dropdown-item d-flex align-items-center" href="<?= url_to('account_profile') ?>#wishlist">
+                                        <i class="bi bi-heart me-2"></i>
+                                        <span>My Wishlist</span>
+                                    </a>
+                                    <a class="dropdown-item d-flex align-items-center" href="<?= url_to('account_settings') ?>">
+                                        <i class="bi bi-gear me-2"></i>
+                                        <span>Settings</span>
+                                    </a>
+                                <?php endif; // Closing the if block here to match the opening ?>
                             </div>
                             <div class="dropdown-footer">
                                 <?php if (auth()->loggedIn()): ?>
-                                    <?php if (auth()->user() && auth()->user()->inGroup('admin')): ?>
+                                    <?php if (auth()->user() && auth()->user()->inGroup('admin')): // Check if user is in 'admin' group ?>
                                         <a href="<?= url_to('admin_dashboard') ?>" class="btn btn-warning w-100 mb-2">Admin Dashboard</a>
                                     <?php endif; ?>
                                     <a href="<?= url_to('logout') ?>" class="btn btn-outline-danger w-100">Logout</a>

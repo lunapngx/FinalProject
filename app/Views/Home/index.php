@@ -10,7 +10,7 @@
                 <div class="col-lg-6 content-col" data-aos="fade-right" data-aos-delay="100">
                     <div class="content">
                         <span class="promo-badge"></span>
-                        <h1><b>MERAKI  </b><span><b> SHOP</b></span></h1>
+                        <h1><b>Meraki <span>Shop</span></b></h1>
                         <p style="word-spacing: 10px;">Meraki shopping cart system is a heartfelt brand that offers handmade crafts created with soul, creativity, and love. Specializing in crochet pieces, pins, fuzzy crafts, ribbon flower bouquets, other handcrafted pieces and customizable gift packages, Meraki transforms thoughtful gestures into tangible expressions of care. Every product is lovingly handcrafted to bring joy—not just to customers, but also to the special people they gift them to. Whether delivered personally or shipped with care, Meraki aims to create moments of happiness through meaningful, artfully made gifts</p>
                         <div class="hero-cta">
                             <a href="#best-sellers-section" class="btn btn-shop">Shop Now <i class="bi bi-arrow-right"></i></a>

@@ -1,50 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Login</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-container { background-color: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 0 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        .login-container h1 { text-align: center; margin-bottom: 1.5rem; }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; }
-        .form-group input { width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem; box-sizing: border-box; }
-        .btn { display: block; width: 100%; padding: 0.75rem; border: none; border-radius: 0.25rem; background-color: #007bff; color: white; font-size: 1rem; cursor: pointer; text-align: center; }
-        .btn:hover { background-color: #0056b3; }
-        .alert { padding: 1rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: 0.25rem; }
-        .alert-danger { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
-        .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
-        .register-link { text-align: center; margin-top: 1rem; }
-    </style>
-</head>
-<body>
-<div class="login-container">
-    <h1>Login</h1>
+<?= $this->extend(config('Auth')->views['layout']) ?>
 
-    <?php if (session()->getFlashdata('msg')): ?>
-        <div class="alert alert-danger"><?= session()->getFlashdata('msg') ?></div>
-    <?php endif; ?>
-    <?php if (session()->getFlashdata('msg_success')): ?>
-        <div class="alert alert-success"><?= session()->getFlashdata('msg_success') ?></div>
-    <?php endif; ?>
+<?= $this->section('title') ?><?= lang('Auth.login') ?> <?= $this->endSection() ?>
 
-    <form action="<?= url_to('login') ?>" method="post">
-        <?= csrf_field() ?>
-        <div class="form-group">
-            <label for="email">Email address</label>
-            <input type="email" id="email" name="email" value="<?= old('email') ?>" required>
+<?= $this->section('main') ?>
+
+    <div class="container d-flex justify-content-center p-5">
+        <div class="card col-12 col-md-5 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-5"><?= lang('Auth.login') ?></h5>
+
+                <?php if (session('error') !== null) : ?>
+                    <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
+                <?php elseif (session('errors') !== null) : ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php if (is_array(session('errors'))) : ?>
+                            <?php foreach (session('errors') as $error) : ?>
+                                <?= $error ?>
+                                <br>
+                            <?php endforeach ?>
+                        <?php else : ?>
+                            <?= session('errors') ?>
+                        <?php endif ?>
+                    </div>
+                <?php endif ?>
+
+                <?php if (session('message') !== null) : ?>
+                    <div class="alert alert-success" role="alert"><?= session('message') ?></div>
+                <?php endif ?>
+
+                <form action="<?= url_to('login') ?>" method="post">
+                    <?= csrf_field() ?>
+
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="floatingEmailInput" name="email" inputmode="email" autocomplete="email" placeholder="<?= lang('Auth.email') ?>" value="<?= old('email') ?>" required>
+                        <label for="floatingEmailInput"><?= lang('Auth.email') ?></label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="floatingPasswordInput" name="password" inputmode="text" autocomplete="current-password" placeholder="<?= lang('Auth.password') ?>" required>
+                        <label for="floatingPasswordInput"><?= lang('Auth.password') ?></label>
+                    </div>
+
+                    <?php if (setting('Auth.sessionConfig')['allowRemembering']): ?>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" name="remember" class="form-check-input" <?php if (old('remember')): ?> checked<?php endif ?>>
+                                <?= lang('Auth.rememberMe') ?>
+                            </label>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="d-grid col-12 col-md-8 mx-auto m-3">
+                        <button type="submit" class="btn btn-primary btn-block"><?= lang('Auth.login') ?></button>
+                    </div>
+
+                    <?php if (setting('Auth.allowMagicLinkLogins')) : ?>
+                        <p class="text-center"><?= lang('Auth.forgotPassword') ?> <a href="<?= url_to('magic-link') ?>"><?= lang('Auth.useMagicLink') ?></a></p>
+                    <?php endif ?>
+
+                    <?php if (setting('Auth.allowRegistration')) : ?>
+                        <p class="text-center"><?= lang('Auth.needAccount') ?> <a href="<?= url_to('register') ?>"><?= lang('Auth.register') ?></a></p>
+                    <?php endif ?>
+
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit" class="btn" >Login</button>
-    </form>
-    <div class="register-link">
-        <p>Need an account? <a href="<?= url_to('register') ?>">Register here</a></p>
     </div>
-</div>
-</body>
-</html>
+
+<?= $this->endSection() ?>
