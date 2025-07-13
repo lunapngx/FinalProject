@@ -3,54 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
+    <title>Register</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 2rem 0; }
-        .register-container { background-color: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 0 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        .register-container h1 { text-align: center; margin-bottom: 1.5rem; }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; }
-        .form-group input { width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem; box-sizing: border-box; }
-        .btn { display: block; width: 100%; padding: 0.75rem; border: none; border-radius: 0.25rem; background-color: #28a745; color: white; font-size: 1rem; cursor: pointer; text-align: center; }
-        .btn:hover { background-color: #218838; }
-        .alert { padding: 1rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: 0.25rem; }
-        .alert-danger { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: 0.5rem; list-style: none; }
-        .login-link { text-align: center; margin-top: 1rem; }
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .register-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        .alert {
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 <div class="register-container">
-    <h1>Create an Account</h1>
+    <h2 class="text-center mb-4">Register</h2>
 
-    <?php if (isset($validation)): ?>
+    <?php if (isset($validation)) : ?>
         <div class="alert alert-danger">
             <?= $validation->listErrors() ?>
         </div>
     <?php endif; ?>
+    <?php if (session()->getFlashdata('msg_success')) : ?>
+        <div class="alert alert-success text-center">
+            <?= session()->getFlashdata('msg_success') ?>
+        </div>
+    <?php endif; ?>
 
-    <form action="<?= url_to('register') ?>" method="post">
-        <?= csrf_field() ?>
+    <form action="<?= base_url('attemptRegister') ?>" method="post">
+        <div class="form-group">
+            <label for="fullname">Full Name</label>
+            <input type="text" name="fullname" id="fullname" class="form-control" value="<?= old('fullname') ?>" required>
+        </div>
         <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" value="<?= old('username') ?>" required>
+            <input type="text" name="username" id="username" class="form-control" value="<?= old('username') ?>" required>
         </div>
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" value="<?= old('email') ?>" required>
+            <input type="email" name="email" id="email" class="form-control" value="<?= old('email') ?>" required>
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" name="password" id="password" class="form-control" required>
         </div>
         <div class="form-group">
             <label for="password_confirm">Confirm Password</label>
-            <input type="password" id="password_confirm" name="password_confirm" required>
+            <input type="password" name="password_confirm" id="password_confirm" class="form-control" required>
         </div>
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="btn btn-primary btn-block">Register</button>
     </form>
-    <div class="login-link">
-        <p>Already have an account? <a href="<?= url_to('login') ?>">Login here</a></p>
-    </div>
+
+    <p class="text-center mt-3">
+        Already have an account? <a href="<?= base_url('login') ?>">Login here</a>
+    </p>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -2,6 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Models\ProductModel;
+use App\Models\OrderModel;   // <-- ADD THIS LINE
+use App\Models\UserModel;
+
 class AdminDashboard extends BaseController
 {
     public function __construct()
@@ -16,9 +20,9 @@ class AdminDashboard extends BaseController
     {
         // You can load dashboard data here, e.g., stats
         $data = [
-            'total_products' => (new \App\Models\ProductModel())->countAllResults(),
-            'total_orders' => (new \App\Models\OrderModel())->countAllResults(),
-            'total_users' => (new \App\Models\UserModel())->countAllResults(),
+            'total_products' => (new ProductModel())->countAllResults(), // Now uses the aliased class
+            'total_orders' => (new OrderModel())->countAllResults(), // Now uses the aliased class
+            'total_users' => (new UserModel())->countAllResults(),   // Now uses the aliased class
         ];
         return view('Admin/dashboard', $data);
     }

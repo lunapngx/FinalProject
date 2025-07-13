@@ -37,6 +37,20 @@ class RegisterController extends BaseController
 
         $userModel->save($data);
 
-        return redirect()->to('/login')->with('msg_success', 'Registration Successful');
+        // Get the newly created user's ID and data
+        $lastInsertId = $userModel->insertID();
+        $newlyRegisteredUser = $userModel->find($lastInsertId);
+
+// Set session data to log the user in
+        $ses_data = [
+            'user_id'    => $newlyRegisteredUser['id'],
+            'user_name'  => $newlyRegisteredUser['username'],
+            'user_email' => $newlyRegisteredUser['email'],
+            'isLoggedIn' => TRUE
+        ];
+        session()->set($ses_data);
+
+// Redirect to the account page with a success message
+        return redirect()->to('/account')->with('msg_success', 'Registration successful! Welcome to your account!');
     }
 }

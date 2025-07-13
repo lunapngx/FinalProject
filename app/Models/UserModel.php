@@ -21,7 +21,7 @@ class UserModel extends Model
         'role',
         'status',
         'active',
-        'fullname',
+        'fullname', // This is important for merged registration
         'last_active',
         'created_at',
         'updated_at',

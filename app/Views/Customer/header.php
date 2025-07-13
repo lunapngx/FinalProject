@@ -66,13 +66,21 @@
                             </div>
                             <<div class="dropdown-footer">
                                 <?php if (auth()->loggedIn()): ?>
-                                    <?php if (auth()->user() && auth()->user()->inGroup('admin')): // Check if user is in 'admin' group ?>
-                                        <a href="/admin/home" class="btn btn-warning w-100 mb-2">Admin Dashboard</a>
-                                    <?php endif; ?>
-                                    <a href="<?= url_to('logout') ?>" class="btn btn-outline-danger w-100">Logout</a>
+                                    <li><a href="#" class="profile-icon"><img src="https://via.placeholder.com/30" alt="Profile"></a></li>
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="user-name"><?= session()->get('user_name') ?></span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="<?= url_to('account') ?>">My Profile</a></li>
+                                            <li><a class="dropdown-item" href="<?= url_to('account_orders') ?>">My Orders</a></li>
+                                            <li><a class="dropdown-item" href="<?= url_to('account_wishlist') ?>">My Wishlist</a></li>
+                                            <li><a class="dropdown-item" href="<?= url_to('logout') ?>">Logout</a></li>
+                                        </ul>
+                                    </li>
                                 <?php else: ?>
-                                    <a href="<?= url_to('login') ?>" class="btn btn-primary w-100 mb-2">Sign In</a>
-                                    <a href="<?= url_to('register') ?>" class="btn btn-outline-primary w-100">Register</a>
+                                    <li><a href="<?= url_to('login') ?>">Sign In</a></li>
+                                    <li><a href="<?= url_to('register') ?>">Register</a></li>
                                 <?php endif; ?>
                             </div>
                         </div>
