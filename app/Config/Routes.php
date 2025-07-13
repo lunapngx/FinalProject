@@ -36,10 +36,9 @@ $routes->get('/about', 'Home::about', ['as' => 'about']);
 // UNIFIED AUTHENTICATION ROUTES - START
 // All login, registration, and logout now go through AuthController
 // ====================================================================
-$routes->get('login', 'AuthController::login', ['as' => 'login']);
-$routes->post('attemptLogin', 'AuthController::login', ['as' => 'attemptLogin']); // Change this line
-$routes->get('register', 'AuthController::register', ['as' => 'register']);
-$routes->post('attemptRegister', 'AuthController::register', ['as' => 'attemptRegister']); // Change this line
+// Changed to allow both GET and POST for login and register directly
+$routes->match(['get', 'post'], 'login', 'AuthController::login', ['as' => 'login']);
+$routes->match(['get', 'post'], 'register', 'AuthController::register', ['as' => 'register']);
 $routes->get('logout', 'AuthController::logout', ['as' => 'logout']);
 
 // Redirecting old admin login/register URLs to the unified authentication forms
