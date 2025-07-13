@@ -26,7 +26,7 @@ use App\Models\CategoryModel;
                     <?php if (!empty($allCategories)): ?>
                         <?php foreach ($allCategories as $cat): ?>
                             <li>
-                                <a href="<?= url_to('products_by_category_slug', $cat['slug'] ?? $cat['id']) ?>">
+                                <a href="<?= url_to('category', $cat['slug'] ?? $cat['id']) ?>">
                                     <?= esc($cat['name']) ?> <i class="bi bi-chevron-right"></i>
                                 </a>
                             </li>
@@ -46,7 +46,7 @@ use App\Models\CategoryModel;
                     <option value="">Sort By</option>
                     <option value="price-asc">Price: Low to High</option>
                     <option value="price-desc">Price: High to Low</option>
-                    <option value="name-asc">Name: A-Z</option>
+                    <option value="name-asc">Rose</option>
                 </select>
             </div>
 

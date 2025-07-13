@@ -1,72 +1,76 @@
-<?= $this->extend('Layout/master') ?>
-
-<?= $this->section('title') ?>Admin Dashboard<?= $this->endSection() ?>
-
-<?= $this->section('styles') ?>
-    <link rel="stylesheet" href="<?= base_url('public/assets/css/main.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('public/assets/css/admin.css') ?>">
-<?= $this->endSection() ?>
+<?= $this->extend('Layout/admin_master') ?>
 
 <?= $this->section('content') ?>
-    <div class="container admin-dashboard-page">
-        <div class="admin-header-nav mb-4 bg-white py-3 shadow-sm rounded-bottom">
-            <div class="container d-flex justify-content-center">
-                <ul class="nav nav-pills">
-                    <li class="nav-item"><a class="nav-link active" href="<?= url_to('admin_dashboard') ?>">HOME</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_products') ?>">PRODUCTS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_orders') ?>">ORDERS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_sales_report') ?>">SALES REPORT</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_account') ?>">ADMIN ACCOUNT</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="row dashboard-cards mb-4">
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card dashboard-card">
-                    <div class="card-body">
-                        <h5 class="card-title">TOTAL SALES</h5>
-                        <p class="card-text">₱ <?= esc(number_format($totalSales ?? 0, 2)) ?></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card dashboard-card">
-                    <div class="card-body">
-                        <h5 class="card-title">WEEKLY ORDERS</h5>
-                        <p class="card-text"><?= esc($weeklyOrders ?? 0) ?></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card dashboard-card">
-                    <div class="card-body">
-                        <h5 class="card-title">CUSTOMERS</h5>
-                        <p class="card-text"><?= esc($customersCount ?? 0) ?></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card dashboard-card">
-                    <div class="card-body">
-                        <h5 class="card-title">PRODUCTS</h5>
-                        <p class="card-text"><?= esc($productsCount ?? 0) ?></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row dashboard-images">
-            <div class="col-md-6 mb-4">
-                <div class="image-card">
-                    <img src="<?= base_url('public/assets/img/dashboard/admin_image_1.jpg') ?>" alt="Admin Dashboard Image 1" class="img-fluid">
-                </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="image-card">
-                    <img src="<?= base_url('public/assets/img/dashboard/admin_image_2.jpg') ?>" alt="Admin Dashboard Image 2" class="img-fluid">
-                </div>
-            </div>
-        </div>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Dashboard</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="<?= url_to('admin_dashboard') ?>">Home</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
     </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+                <div class="col-lg-4 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3><?= esc($total_orders ?? 0) ?></h3>
+                            <p>Total Orders</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-bag"></i>
+                        </div>
+                        <a href="<?= url_to('admin_orders') ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-4 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3><?= esc($total_products ?? 0) ?></h3>
+                            <p>Total Products</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-stats-bars"></i>
+                        </div>
+                        <a href="<?= url_to('admin_products') ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-4 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3><?= esc($total_users ?? 0) ?></h3>
+                            <p>User Registrations</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-person-add"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
 <?= $this->endSection() ?>

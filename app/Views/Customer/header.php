@@ -70,7 +70,6 @@
                                     <?php endif; ?>
                                     <a href="<?= url_to('logout') ?>" class="btn btn-outline-danger w-100">Logout</a>
                                 <?php else: ?>
-                                    <!-- These buttons only show when NOT logged in -->
                                     <a href="<?= url_to('login') ?>" class="btn btn-primary w-100 mb-2">Sign In</a>
                                     <a href="<?= url_to('register') ?>" class="btn btn-outline-primary w-100">Register</a>
                                 <?php endif; ?>

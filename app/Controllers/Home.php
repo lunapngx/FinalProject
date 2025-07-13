@@ -1,27 +1,23 @@
-<?php namespace App\Controllers;
+<?php
+
+namespace App\Controllers;
+
+use App\Models\ProductModel;
 
 class Home extends BaseController
 {
     public function index()
     {
-        // You can fetch featured products here later
-        return view('Home/index', ['title' => 'Welcome']);
+        $productModel = new ProductModel();
+
+        // Fetch some products to display on the homepage
+        $data['products'] = $productModel->limit(8)->find();
+
+        return view('Home/index', $data);
     }
+
     public function about()
     {
-        $data = [
-            'title' => 'About',
-        ];
-
-        return view('home/about', ['title' => 'About']);
+        return view('Home/about');
     }
-    public function categories()
-    {
-        $data = [
-            'title' => 'CategoryModel',
-        ];
-
-        return view('Category/index', ['title' => 'CategoryModel']);
-    }
-
 }

@@ -1,42 +1,28 @@
-<?php namespace App\Controllers;
+<?php
+
+namespace App\Controllers;
 
 use App\Models\ProductModel;
-use CodeIgniter\Controller;
-use CodeIgniter\Exceptions\PageNotFoundException;
 
-class ProductController extends BaseController // Ensure this extends BaseController if it exists, otherwise CodeIgniter\Controller
+class ProductController extends BaseController
 {
     public function index()
     {
-        $productModel = new \App\Models\ProductModel(); // Use fully qualified name for clarity
-        $data['products'] = $productModel->findAll(); // Fetches ALL products
+        $productModel = new ProductModel();
+        $data['products'] = $productModel->findAll();
 
-        // Render the new product list view (index.php)
-        return view('Product/index', $data + ['title' => 'Our Flowers']);
+        return view('Product/index', $data);
     }
 
-    public function show(int $id)
+    public function show($slug = null)
     {
-        $prodModel = new \App\Models\ProductModel(); // Use fully qualified name
-        $product = $prodModel->find($id); // Fetches a single product
+        $productModel = new ProductModel();
+        $data['product'] = $productModel->where('id', $slug)->first(); // Assuming slug is the ID for now
 
-        if (!$product) {
-            throw new PageNotFoundException('Product not found');
+        if (empty($data['product'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Cannot find the product: ' . $slug);
         }
 
-        // Decode JSON arrays for the view (if stored as JSON strings)
-        $product['colors'] = json_decode($product['colors'] ?? '[]', true);
-        $product['sizes'] = json_decode($product['sizes'] ?? '[]', true);
-
-        // Placeholder for reviews (if ReviewModel is not used or defined yet)
-        // $revModel = new \App\Models\ReviewModel();
-        // $reviews  = $revModel->where('product_id', $id)->findAll();
-
-        // Render the renamed product detail view (show.php)
-        return view('Product/show', [
-            'product' => $product,
-            'reviews' => [], // Pass actual reviews if available
-            'title' => $product['name'],
-        ]);
+        return view('Product/show', $data);
     }
 }
