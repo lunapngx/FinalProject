@@ -8,6 +8,8 @@
     <meta name="description" content="">
     <meta name="keywords" content="">
 
+    <meta name="csrf-token" content="<?= csrf_hash() ?>">
+    <meta name="csrf-name" content="<?= csrf_token() ?>">
     <link href="<?= base_url('assets/img/favicon.png') ?>" rel="icon">
     <link href="<?= base_url('assets/img/apple-touch-icon.png') ?>" rel="apple-touch-icon">
 

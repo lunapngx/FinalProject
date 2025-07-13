@@ -56,7 +56,7 @@
     <?php endif; ?>
 
     <form action="/login" method="post">
-        <?= csrf_field() ?> <button type="submit">Submit</button>
+        <?= csrf_field() ?>
 
         <div class="form-group">
             <label for="email">Email</label>

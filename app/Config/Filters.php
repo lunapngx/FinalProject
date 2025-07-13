@@ -23,9 +23,9 @@ class Filters extends BaseConfig
 
     public array $globals = [
         'before' => [
+            'csrf', // Ensure 'csrf' is listed here
             // 'honeypot',
-            'csrf',
-            // 'invalidchars',
+            // 'toolbar',
         ],
         'after' => [
             'toolbar',
