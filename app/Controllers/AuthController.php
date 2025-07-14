@@ -1,6 +1,4 @@
-<?php
-
-namespace App\Controllers;
+<?php namespace App\Controllers;
 
 use App\Models\UserModel;
 use CodeIgniter\Database\Exceptions\DatabaseException;
@@ -30,21 +28,30 @@ class AuthController extends BaseController
     {
         helper(['form', 'url']);
 
+        // Log current session state before processing login attempt
+        log_message('debug', 'Login Page Access - Current Session: ' . print_r($this->session->get(), true));
+        log_message('debug', 'Login Page Access - IsLoggedIn: ' . ($this->session->get('isLoggedIn') ? 'true' : 'false') . ', Role: ' . $this->session->get('role'));
+
         // If already logged in, redirect accordingly
         if ($this->session->get('isLoggedIn')) {
             if ($this->session->get('role') === 'admin') {
+                log_message('debug', 'Already logged in as admin, redirecting to /admin/dashboard');
                 return redirect()->to('/admin/dashboard');
             }
+            log_message('debug', 'Already logged in as user, redirecting to /account');
             return redirect()->to('/account');
         }
 
         if ($this->request->getMethod() === 'post') {
+            log_message('debug', 'Login form submitted.');
+
             $rules = [
                 'email'    => 'required|valid_email',
                 'password' => 'required|min_length[8]|max_length[255]',
             ];
 
             if (!$this->validate($rules)) {
+                log_message('debug', 'Login validation failed: ' . print_r($this->validator->getErrors(), true));
                 $data['validation'] = $this->validator;
                 return view('login', $data);
             }
@@ -57,6 +64,7 @@ class AuthController extends BaseController
 
             if ($user && password_verify($password, $user['password_hash'])) {
                 if (isset($user['is_verified']) && !$user['is_verified']) {
+                    log_message('debug', 'User email not verified: ' . $email);
                     return redirect()->back()->withInput()->with('error', 'Please verify your email address before logging in.');
                 }
 
@@ -71,15 +79,18 @@ class AuthController extends BaseController
                 ];
                 $this->session->set($ses_data);
 
-// Add debug log here
-                log_message('debug', 'Session data: ' . print_r($this->session->get(), true));
+                // Add debug log here to check session data after setting
+                log_message('debug', 'Login successful! Session data set: ' . print_r($this->session->get(), true));
 
                 if ($user['role'] === 'admin') {
+                    log_message('debug', 'User is admin, redirecting to /admin/dashboard');
                     return redirect()->to('/admin/dashboard');
                 } else {
+                    log_message('debug', 'User is regular user, redirecting to /account');
                     return redirect()->to('/account');
                 }
             } else {
+                log_message('debug', 'Invalid login credentials for email: ' . $email);
                 session()->setFlashdata('error', 'Invalid Email or Password.');
                 $data['validation'] = $this->validator;
                 return view('login', $data);
@@ -87,6 +98,7 @@ class AuthController extends BaseController
         }
 
         // GET: show login form
+        log_message('debug', 'Displaying login form.');
         return view('login');
     }
 
@@ -95,15 +107,23 @@ class AuthController extends BaseController
      */
     public function register()
     {
+        // Log current session state before processing registration attempt
+        log_message('debug', 'Register Page Access - Current Session: ' . print_r($this->session->get(), true));
+        log_message('debug', 'Register Page Access - IsLoggedIn: ' . ($this->session->get('isLoggedIn') ? 'true' : 'false') . ', Role: ' . $this->session->get('role'));
+
         if ($this->session->get('isLoggedIn')) {
             if ($this->session->get('role') === 'admin') {
+                log_message('debug', 'Already logged in as admin, redirecting to /admin/dashboard from register.');
                 return redirect()->to('/admin/dashboard');
             }
+            log_message('debug', 'Already logged in as user, redirecting to /account from register.');
             return redirect()->to('/account');
         }
 
         $data = [];
         if ($this->request->getMethod() === 'post') {
+            log_message('debug', 'Registration form submitted.');
+
             $rules = [
                 'fullname'         => 'required|min_length[3]|max_length[255]',
                 'username'         => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
@@ -113,6 +133,7 @@ class AuthController extends BaseController
             ];
 
             if (!$this->validate($rules)) {
+                log_message('debug', 'Registration validation failed: ' . print_r($this->validator->getErrors(), true));
                 $data['validation'] = $this->validator;
             } else {
                 $userModel = new UserModel();
@@ -127,17 +148,21 @@ class AuthController extends BaseController
                         'status'        => 'active',
                     ];
                     $userModel->save($userData);
+                    log_message('debug', 'User registered successfully: ' . $userData['email']);
                     session()->setFlashdata('success', 'Registration successful! Please log in.');
                     return redirect()->to('/login');
                 } catch (DatabaseException $e) {
+                    log_message('error', 'Database error during registration: ' . $e->getMessage());
                     session()->setFlashdata('error', 'Database error: Could not complete registration. Please try again.');
                     return redirect()->back()->withInput();
                 } catch (Exception $e) {
+                    log_message('error', 'Unexpected error during registration: ' . $e->getMessage());
                     session()->setFlashdata('error', 'An unexpected error occurred during registration. Please try again.');
                     return redirect()->back()->withInput();
                 }
             }
         }
+        log_message('debug', 'Displaying register form.');
         return view('register', $data);
     }
 
@@ -146,26 +171,9 @@ class AuthController extends BaseController
      */
     public function logout()
     {
+        log_message('debug', 'User attempting to log out. Session before destroy: ' . print_r($this->session->get(), true));
         $this->session->destroy();
+        log_message('debug', 'Session destroyed. Redirecting to /login');
         return redirect()->to('/login')->with('success', 'You have been successfully logged out.');
-    }
-
-    /**
-     * Email Verification (if used).
-     */
-    public function verifyEmail($hash)
-    {
-        $userModel = new UserModel();
-        $user = $userModel->where('verification_hash', $hash)->first();
-
-        if ($user) {
-            $userModel->update($user['id'], [
-                'is_verified' => true,
-                'verification_hash' => null,
-            ]);
-            return redirect()->to('/login')->with('success', 'Email successfully verified! You can now log in.');
-        } else {
-            return redirect()->to('/login')->with('error', 'Invalid or expired verification link.');
-        }
     }
 }

@@ -21,6 +21,8 @@ class Filters extends BaseConfig
         'auth'          => \App\Filters\AuthFilter::class,
     ];
 
+    // app/Config/Filters.php
+
     public array $globals = [
         'before' => [
             'csrf', // Ensure 'csrf' is listed here

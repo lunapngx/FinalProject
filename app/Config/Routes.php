@@ -16,8 +16,8 @@ $routes->get('/', 'Home::index', ['as' => 'home']);
 $routes->get('/about', 'Home::about', ['as' => 'about']);
 
 // Unified authentication routes
-$routes->match(['get', 'post'], 'login', 'AuthController::login', ['as' => 'login']);
-$routes->match(['get', 'post'], 'register', 'AuthController::register', ['as' => 'register']);
+$routes->match(['GET', 'POST'], 'login', 'AuthController::login', ['as' => 'login']); // Changed to 'GET', 'POST'
+$routes->match(['GET', 'POST'], 'register', 'AuthController::register', ['as' => 'register']); // Changed to 'GET', 'POST'
 $routes->get('logout', 'AuthController::logout', ['as' => 'logout']);
 
 // Admin login/register/logout redirect to unified forms
@@ -35,8 +35,8 @@ $routes->get('/category/(:segment)', 'CategoryController::index/$1', ['as' => 'c
 $routes->get('/cart', 'CartController::index', ['as' => 'cart_view']);
 $routes->post('/cart/add', 'CartController::add', ['as' => 'cart_add']);
 $routes->get('/cart/remove/(:any)', 'CartController::remove/$1', ['as' => 'cart_remove']);
-$routes->get('/checkout', 'CheckoutController::index', ['as' => 'checkout_view']);
-$routes->post('/checkout/place-order', 'OrderController::placeOrder', ['as' => 'place_order']);
+$routes->get('/checkout', 'CheckoutController::index', ['as' => 'checkout_view']); // ADDED: ['as' => 'checkout_view']
+$routes->post('/checkout/place-order', 'OrderController::placeOrder', ['as' => 'place_order']); // Corrected route name if place_order is used
 
 // Customer account routes (auth filter applied in Filters.php)
 $routes->group('', function($routes) {
@@ -48,14 +48,14 @@ $routes->group('', function($routes) {
 // Admin routes (adminAuth filter applied in Filters.php)
 $routes->group('admin', function($routes){
     $routes->get('dashboard', 'AdminDashboard::index', ['as' => 'admin_dashboard']);
-    $routes->get('/', 'AdminDashboard::index');
+    $routes->get('/', 'AdminDashboard::index'); // This route is often used as the base admin URL
     $routes->get('account', 'AdminController::adminaccount', ['as' => 'admin_account']);
     $routes->get('products', 'AdminController::products', ['as' => 'admin_products']);
     $routes->get('orders', 'AdminController::orders', ['as' => 'admin_orders']);
     $routes->get('sales-report', 'AdminController::sales_report', ['as' => 'admin_sales_report']);
-    $routes->get('products/add', 'AdminController::add_product');
-    $routes->match(['GET', 'POST'], 'products/add', 'AdminController::add_product', ['as' => 'admin_add_product']);
-    $routes->match(['GET', 'POST'], 'products/edit/(:num)', 'AdminController::edit_product/$1', ['as' => 'admin_edit_product']);
+    $routes->get('products/add', 'AdminController::add_product'); // Keep this if used for GET request to show form
+    $routes->match(['GET', 'POST'], 'products/add', 'AdminController::add_product', ['as' => 'admin_add_product']); // Changed to 'GET', 'POST'
+    $routes->match(['GET', 'POST'], 'products/edit/(:num)', 'AdminController::edit_product/$1', ['as' => 'admin_edit_product']); // Changed to 'GET', 'POST'
     $routes->get('products/delete/(:num)', 'AdminController::delete_product/$1', ['as' => 'admin_products_delete']);
 });
 
