@@ -122,9 +122,9 @@ class AuthController extends BaseController
 
                     // Redirect based on role or to a default dashboard
                     if ($user['role'] === 'admin') {
-                        return redirect()->to('/admin/dashboard');
+                        return view('Admin/login');
                     } else {
-                        return redirect()->to('/home'); // Or customer dashboard
+                        return view('login');
                     }
 
                 } else {
@@ -140,7 +140,7 @@ class AuthController extends BaseController
         }
 
         // If it's a GET request, just show the login form
-        return view('login');
+        return redirect()->to('/login');
     }
 
     /**
