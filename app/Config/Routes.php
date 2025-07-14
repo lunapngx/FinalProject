@@ -86,7 +86,6 @@ $routes->group('admin', function($routes){ // Filter 'adminAuth' is now applied 
 // ADMIN ROUTES - END
 // ====================================================================
 
-
 /*
  * --------------------------------------------------------------------
  * Additional Routing

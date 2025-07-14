@@ -34,7 +34,7 @@ class Database extends Config
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
         'pConnect'     => false,
-        'DBDebug'      => 'true', // In development, this is true. In production, false.
+        'DBDebug'      => ENVIRONMENT === 'development', // In development, this is true. In production, false.
         'charset'      => 'utf8',
         'DBCollat'     => 'utf8_general_ci',
         'swapPre'      => '',
