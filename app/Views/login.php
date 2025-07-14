@@ -43,18 +43,6 @@
         </div>
     <?php endif; ?>
 
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger" role="alert">
-            <?= session()->getFlashdata('error') ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (isset($validation)): ?>
-        <div class="alert alert-danger" role="alert">
-            <?= $validation->listErrors() ?>
-        </div>
-    <?php endif; ?>
-
     <form action="/login" method="post">
         <?= csrf_field() ?>
 

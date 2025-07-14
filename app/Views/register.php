@@ -41,27 +41,36 @@
             <?= session()->getFlashdata('error') ?>
         </div>
     <?php endif; ?>
+    <?php if (isset($validation)) : ?>
+        <div class="alert alert-danger">
+            <?= $validation->listErrors() ?>
+        </div>
+    <?php endif; ?>
 
-    <!-- Inside your register view (e.g., app/Views/register.php) -->
-    <form action="<?= base_url('register') ?>" method="post">
+    <form action="<?= base_url('register') ?>" method="post" autocomplete="off">
         <?= csrf_field() ?>
 
-        <label for="fullname">Full Name:</label>
-        <input type="text" name="fullname" id="fullname" required>
-        <br>
-        <label for="username">Username:</label>
-        <input type="text" name="username" id="username" required>
-        <br>
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required>
-        <br>
-        <label for="pass_confirm">Confirm Password:</label>
-        <input type="password" name="pass_confirm" id="pass_confirm" required>
-        <br>
-        <button type="submit">Register</button>
+        <div class="form-group">
+            <label for="fullname">Full Name:</label>
+            <input type="text" class="form-control" name="fullname" id="fullname" required value="<?= old('fullname') ?>">
+        </div>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control" name="username" id="username" required value="<?= old('username') ?>">
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" name="email" id="email" required value="<?= old('email') ?>">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" name="password" id="password" required>
+        </div>
+        <div class="form-group">
+            <label for="password_confirm">Confirm Password:</label>
+            <input type="password" class="form-control" name="password_confirm" id="password_confirm" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Register</button>
     </form>
 
     <p class="text-center mt-3">
