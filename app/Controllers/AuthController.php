@@ -60,6 +60,7 @@ class AuthController extends BaseController
                     return redirect()->back()->withInput()->with('error', 'Please verify your email address before logging in.');
                 }
 
+                // After successful user verification
                 $ses_data = [
                     'id'        => $user['id'],
                     'fullname'  => $user['fullname'],
@@ -69,6 +70,9 @@ class AuthController extends BaseController
                     'isLoggedIn' => true,
                 ];
                 $this->session->set($ses_data);
+
+// Add debug log here
+                log_message('debug', 'Session data: ' . print_r($this->session->get(), true));
 
                 if ($user['role'] === 'admin') {
                     return redirect()->to('/admin/dashboard');

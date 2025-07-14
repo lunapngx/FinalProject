@@ -51,17 +51,15 @@ class Filters extends BaseConfig
         ],
         'auth' => [
             'before' => [
-                'account/*', // Apply to all routes under '/account'
+                'account/*',
             ],
-            // If you have a unified login for both admin and regular users
-            // and /login or /register are also user-facing auth routes.
-            // Adjust based on how your login/register is structured.
             'except' => [
                 'login',
                 'register',
                 'logout',
-                // If you have specific user/customer login/register pages
-                // 'user/login', 'user/register', 'user/logout'
+                'account/login',
+                'account/register',
+                'account/logout',
             ],
         ],
     ];
