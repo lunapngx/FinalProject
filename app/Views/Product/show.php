@@ -1,4 +1,4 @@
-<?= $this->extend('layout/main') ?>
+<?= $this->extend('layouts/master') ?>
 
 <?= $this->section('title') ?>
 <?= /** @var TYPE_NAME $product */

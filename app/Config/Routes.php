@@ -56,9 +56,11 @@ $routes->group('admin', function($routes){
     $routes->get('products', 'AdminController::products', ['as' => 'admin_products']);
     $routes->get('orders', 'AdminController::orders', ['as' => 'admin_orders']);
     $routes->get('sales-report', 'AdminController::sales_report', ['as' => 'admin_sales_report']);
-    $routes->get('products/add', 'AdminController::add_product'); // Keep this if used for GET request to show form
-    $routes->match(['GET', 'POST'], 'products/add', 'AdminController::add_product', ['as' => 'admin_add_product']); // Changed to 'GET', 'POST'
-    $routes->match(['GET', 'POST'], 'products/edit/(:num)', 'AdminController::edit_product/$1', ['as' => 'admin_edit_product']); // Changed to 'GET', 'POST'
+
+    // Product Management Routes
+    $routes->get('products/add', 'AdminController::add_product', ['as' => 'admin_add_product']);
+    $routes->post('products/add', 'AdminController::saveProduct'); // Corrected POST route name to match saveProduct
+    $routes->match(['GET', 'POST'], 'products/edit/(:num)', 'AdminController::edit_product/$1', ['as' => 'admin_edit_product']);
     $routes->get('products/delete/(:num)', 'AdminController::delete_product/$1', ['as' => 'admin_products_delete']);
 });
 

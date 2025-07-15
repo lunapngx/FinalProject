@@ -1,4 +1,4 @@
-<?= $this->extend('Layout/master') ?>
+<?= $this->extend('layouts/master') ?>
 
 <?= $this->section('title') ?>Your Cart<?= $this->endSection() ?>
 
@@ -95,7 +95,7 @@
                 </table>
 
                 <div class="cart-actions text-end py-3 px-3">
-                    <a href="<?= url_to('products_list') ?>" class="btn btn-secondary">Continue Shopping</a>
+                    <a href="<?= url_to('products') ?>" class="btn btn-secondary">Continue Shopping</a>
                     <button type="submit" form="updateAllCartItems" class="btn btn-primary" id="updateCartBtn">Update
                         Cart
                     </button>
@@ -132,7 +132,7 @@
                 <a href="<?= url_to('checkout_view') ?>" class="btn btn-proceed">
                     PROCEED TO CHECKOUT <i class="bi bi-arrow-right"></i>
                 </a>
-                <a href="<?= url_to('products_list') ?>" class="btn btn-continue">
+                <a href="<?= url_to('products') ?>" class="btn btn-continue">
                     Continue Shopping <i class="bi bi-arrow-left"></i>
                 </a>
                 <div class="secure" style="text-align:center;margin-top:1rem;font-size:.9rem">

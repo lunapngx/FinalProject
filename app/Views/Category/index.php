@@ -3,7 +3,7 @@
 use App\Models\CategoryModel;
 
 ?>
-<?= $this->extend('Layout/master') ?>
+<?= $this->extend('layouts/master') ?>
 
 <?= $this->section('title') ?>Categories<?= $this->endSection() ?>
 

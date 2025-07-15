@@ -47,9 +47,13 @@
                     <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Image</th>
                         <th>Name</th>
                         <th>Price</th>
                         <th>Stock</th>
+                        <th>Category</th>
+                        <th>Colors</th>
+                        <th>Sizes</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -58,18 +62,50 @@
                         <?php foreach ($products as $product): ?>
                             <tr>
                                 <td><?= esc($product['id']) ?></td>
+                                <td>
+                                    <?php if ($product['image']): ?>
+                                        <img src="<?= base_url('uploads/products/' . $product['image']) ?>" alt="<?= esc($product['name']) ?>" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <?php else: ?>
+                                        No Image
+                                    <?php endif; ?>
+                                </td>
                                 <td><?= esc($product['name']) ?></td>
-                                <td>₱<?= esc(number_format($product['price'], 2)) ?></td>
+                                <td>₱<?= esc(number_format($product['price'], 2)) ?>
+                                    <?php if ($product['original_price'] && $product['original_price'] > $product['price']): ?>
+                                        <br><small><del>₱<?= esc(number_format($product['original_price'], 2)) ?></del></small>
+                                    <?php endif; ?>
+                                </td>
                                 <td><?= esc($product['stock']) ?></td>
+                                <td><?= esc($product['category_id']) // You might want to fetch category name here ?></td>
+                                <td>
+                                    <?php
+                                    // Assuming colors is an array due to afterFind callback
+                                    if (is_array($product['colors']) && !empty($product['colors'])) {
+                                        echo implode(', ', $product['colors']);
+                                    } else {
+                                        echo 'N/A';
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    // Assuming sizes is an array due to afterFind callback
+                                    if (is_array($product['sizes']) && !empty($product['sizes'])) {
+                                        echo implode(', ', $product['sizes']);
+                                    } else {
+                                        echo 'N/A';
+                                    }
+                                    ?>
+                                </td>
                                 <td>
                                     <a href="<?= url_to('admin_edit_product', $product['id']) ?>" class="btn btn-sm btn-info">Edit</a>
-                                    <a href="<?= url_to('admin_delete_product', $product['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
+                                    <a href="<?= url_to('admin_products_delete', $product['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="5" class="text-center">No products found.</td>
+                            <td colspan="9" class="text-center">No products found.</td>
                         </tr>
                     <?php endif; ?>
                     </tbody>

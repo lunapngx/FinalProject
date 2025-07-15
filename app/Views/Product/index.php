@@ -1,4 +1,4 @@
-<?= $this->extend('Layout/master') ?>
+<?= $this->extend('layouts/master') ?>
 
 <?= $this->section('title') ?>All Products<?= $this->endSection() ?>
 

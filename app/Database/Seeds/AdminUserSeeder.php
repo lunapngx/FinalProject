@@ -18,13 +18,12 @@ class AdminUserSeeder extends Seeder
             return;
         }
 
-        // If user doesn't exist, create them
         echo "Admin user not found. Creating now...\n";
 
         $user = new User([
-            'username' => 'admin',
-            'email'    => 'admin@example.com',
-            'password' => 'adminpassword',
+            'username' => 'MerakiAdmin99',
+            'email'    => 'MerakiAdmin99@gmail.com',
+            'password' => 'Merks990Admin',
             'active'   => 1,
         ]);
         $users->save($user);

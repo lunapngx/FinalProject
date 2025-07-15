@@ -8,7 +8,14 @@ class CartController extends BaseController
 {
     public function index()
     {
-        $data['cart'] = \Config\Services::cart();
+        $cart = \Config\Services::cart();
+
+        // Get all items currently in the cart
+        $data['cartItems'] = $cart->contents();
+
+        // Get the total price of all items in the cart
+        $data['total'] = $cart->total();
+
         return view('Cart/cart', $data);
     }
 
