@@ -29,7 +29,7 @@ class Database extends Config
         'DSN'          => '',
         'hostname'     => 'localhost',
         'username'     => 'root',
-        'password'     => '1234',
+        'password'     => '12345mem',
         'database'     => 'shoppingsystem_db',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
