@@ -1,6 +1,6 @@
 <?php namespace App\Controllers;
 
-use App\Models\UserModel;
+use CodeIgniter\Shield\Models\UserModel;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -84,10 +84,10 @@ class AuthController extends BaseController
 
                 if ($user['role'] === 'admin') {
                     log_message('debug', 'User is admin, redirecting to /admin/dashboard');
-                    return redirect()->to('/admin/dashboard');
+                    return redirect()->route('admin_dashboard');
                 } else {
                     log_message('debug', 'User is regular user, redirecting to /account');
-                    return redirect()->to('/account');
+                    return redirect()->route('admin_account');
                 }
             } else {
                 log_message('debug', 'Invalid login credentials for email: ' . $email);

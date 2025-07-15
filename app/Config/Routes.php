@@ -20,11 +20,6 @@ $routes->match(['GET', 'POST'], 'login', 'AuthController::login', ['as' => 'logi
 $routes->match(['GET', 'POST'], 'register', 'AuthController::register', ['as' => 'register']); // Changed to 'GET', 'POST'
 $routes->get('logout', 'AuthController::logout', ['as' => 'logout']);
 
-// Admin login/register/logout redirect to unified forms
-$routes->get('admin/login', 'AuthController::login', ['as' => 'admin_login_redirect']);
-$routes->get('admin/register', 'AuthController::register', ['as' => 'admin_register_redirect']);
-$routes->get('admin/logout', 'AuthController::logout', ['as' => 'admin_logout']);
-
 // Product and category routes
 $routes->get('/products', 'ProductController::index', ['as' => 'products']);
 $routes->get('/product/(:segment)', 'ProductController::show/$1', ['as' => 'product_detail']);

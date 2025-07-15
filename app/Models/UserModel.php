@@ -1,56 +1,62 @@
-<?php namespace App\Models;
+<?php
+
+namespace App\Models;
 
 use CodeIgniter\Model;
 
 class UserModel extends Model
 {
-    // !!! IMPORTANT: This MUST match your actual users table name in your database.
-    protected $table = 'users'; // Example: 'users', 'my_users_table'
+    protected $table = 'users';
+    protected $primaryKey = 'id';
+    protected $useAutoIncrement = true;
+    protected $returnType     = 'array';
+    protected $useSoftDeletes = false;
 
-    // !!! IMPORTANT: This MUST match the primary key column name of your users table.
-    protected $primaryKey = 'id'; // Example: 'id', 'user_id'
-
-    protected $useAutoIncrement = true; // Set to true if your primary key is auto-incrementing
-
-    protected $returnType     = 'array'; // Data will be returned as arrays. Change to 'object' if you prefer objects.
-    protected $useSoftDeletes = false;   // Set to true if your table has a 'deleted_at' column for soft deletes.
-
-    // !!! CRITICAL: List ALL database column names that you allow to be inserted or updated via $userModel->save().
-    // If a field is not listed here, it will be ignored when you try to save it.
+    /**
+     * --- IMPORTANT ---
+     * The 'role' field has been removed because permissions are now handled
+     * by the auth_groups and auth_groups_users tables.
+     * I've also added 'is_verified' which is used in your AuthController.
+     */
     protected $allowedFields = [
         'fullname',
         'username',
         'email',
-        'password_hash', // This stores the hashed password
-        'role',          // e.g., 'user', 'admin'
-        'active',        // e.g., 0 for inactive, 1 for active
-        'status',        // e.g., 'pending', 'active', 'banned'
-        // Add any other columns from your 'users' table that your application will set/update.
-        // For example, if you have 'phone', 'address', etc., add them here.
+        'password_hash',
+        'is_verified',
+        'status',
+        'active',
     ];
 
-    // --- Timestamps Configuration ---
-    // Set to true if your database table automatically manages 'created_at' and 'updated_at' columns.
-    // If your table has these columns, set useTimestamps to true.
+    // Timestamps configuration
     protected $useTimestamps = true;
-    protected $createdField  = 'created_at'; // Name of the 'created at' column in your DB
-    protected $updatedField  = 'updated_at'; // Name of the 'updated at' column in your DB
-    protected $deletedField  = 'deleted_at'; // Name of the 'deleted at' column (only if useSoftDeletes is true)
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
-    // --- Validation Rules (Optional but Recommended) ---
-    // You can define validation rules here for data inserted/updated via the model.
-    // If you have validation in your controller (like in AuthController::register),
-    // these model-level rules can be supplementary or a fallback.
+    // Validation rules
     protected $validationRules    = [];
     protected $validationMessages = [];
-    protected $skipValidation     = false; // Set to true to bypass model's internal validation during save()
+    protected $skipValidation     = false;
 
-    // --- Callbacks (Optional) ---
-    // These methods can be used to perform actions before/after database operations.
-    // protected $beforeInsert = [];
-    // protected $afterInsert  = [];
-    // protected $beforeUpdate = [];
-    // protected $afterUpdate  = [];
-    // protected $afterFind    = [];
-    // protected $afterDelete  = [];
+    /**
+     * --- NEW METHOD ---
+     * Fetches the names of all groups a user belongs to.
+     * This is the correct method for your database structure.
+     *
+     * @param int $userId The user's ID.
+     * @return array An array of group names (e.g., ['admin']).
+     */
+    public function getGroups(int $userId): array
+    {
+        // This method joins the two tables from your database screenshot
+        $groups = $this->db->table('auth_groups_users')
+            ->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id')
+            ->where('auth_groups_users.user_id', $userId)
+            ->get()
+            ->getResultArray();
+
+        // Returns a simple array of group names
+        return array_column($groups, 'name');
+    }
 }
