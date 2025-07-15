@@ -11,14 +11,22 @@ $routes->setTranslateURIDashes(false);
 $routes->set404Override();
 $routes->setAutoRoute(false);
 
-// Public routes
-$routes->get('/', 'Home::index', ['as' => 'home']);
+$routes->get('/', 'Home::index');
 $routes->get('/about', 'Home::about', ['as' => 'about']);
 
-// Unified authentication routes
-$routes->match(['GET', 'POST'], 'login', 'AuthController::login', ['as' => 'login']); // Changed to 'GET', 'POST'
-$routes->match(['GET', 'POST'], 'register', 'AuthController::register', ['as' => 'register']); // Changed to 'GET', 'POST'
-$routes->get('logout', 'AuthController::logout', ['as' => 'logout']);
+
+// --- AUTH ROUTES ---
+
+// Your custom routes should come FIRST
+// This tells the app to use your controller for login and logout
+$routes->get('login', 'LoginController::loginView');
+$routes->post('login', 'LoginController::loginAction');
+$routes->get('logout', 'LoginController::logoutAction');
+
+// Registration
+$routes->get('register', 'RegisterController::registerView');
+$routes->post('register', 'RegisterController::registerAction');
+
 
 // Product and category routes
 $routes->get('/products', 'ProductController::index', ['as' => 'products']);
@@ -34,7 +42,7 @@ $routes->get('/checkout', 'CheckoutController::index', ['as' => 'checkout_view']
 $routes->post('/checkout/place-order', 'OrderController::placeOrder', ['as' => 'place_order']); // Corrected route name if place_order is used
 
 // Customer account routes (auth filter applied in Filters.php)
-$routes->group('', function($routes) {
+$routes->group('customer', function($routes) {
     $routes->get('account', 'UserController::index', ['as' => 'account']);
     $routes->get('account/orders', 'OrderController::index', ['as' => 'account_orders']);
     $routes->get('account/wishlist', 'WishlistController::index', ['as' => 'account_wishlist']);
@@ -54,6 +62,6 @@ $routes->group('admin', function($routes){
     $routes->get('products/delete/(:num)', 'AdminController::delete_product/$1', ['as' => 'admin_products_delete']);
 });
 
-if (is_file(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
-    require APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php';
-}
+// IMPORTANT: CodeIgniter Shield's routes MUST be included
+// These will define 'login', 'register', 'logout', 'magic-link', etc.
+service('auth')->routes($routes);
