@@ -19,13 +19,14 @@ class UserModel extends Model
      * I've also added 'is_verified' which is used in your AuthController.
      */
     protected $allowedFields = [
-        'fullname',
-        'username',
+        'first_name', // Make sure this is here
+        'last_name',  // Make sure this is here
+        'username',   // Make sure this is here
         'email',
         'password_hash',
+        'role',
         'is_verified',
         'status',
-        'active',
     ];
 
     // Timestamps configuration

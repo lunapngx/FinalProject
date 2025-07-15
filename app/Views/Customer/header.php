@@ -79,8 +79,8 @@
                                         </ul>
                                     </li>
                                 <?php else: ?>
-                                    <li><a href="<?= url_to('login') ?>">Sign In</a></li>
-                                    <li><a href="<?= url_to('register') ?>">Register</a></li>
+                                    <li><a href="<?= base_url('login') ?>">Sign In</a></li>
+                                    <li><a href="<?= base_url('register') ?>">Register</a></li>
                                 <?php endif; ?>
                             </div>
                         </div>
