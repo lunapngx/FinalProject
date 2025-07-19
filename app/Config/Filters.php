@@ -54,6 +54,12 @@ class Filters extends BaseConfig
         'auth' => [
             'before' => [
                 'account/*',
+                'cart', // Protects /cart
+                'cart/*', // Protects /cart/add, /cart/remove/(:any)
+                'categories', // Protects /categories
+                'category/*', // Protects /category/(:segment)
+                'checkout', // Protects /checkout
+                'checkout/*', // Protects /checkout/place-order
             ],
             'except' => [
                 'login',

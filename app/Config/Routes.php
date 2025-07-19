@@ -49,7 +49,7 @@ $routes->group('customer', function($routes) {
 });
 
 // Admin routes (adminAuth filter applied in Filters.php)
-$routes->group('admin', function($routes){
+$routes->group('admin', ['filter' => ['session', 'group:admin']], static function($routes){
     $routes->get('dashboard', 'AdminDashboard::index', ['as' => 'admin_dashboard']);
     $routes->get('/', 'AdminDashboard::index'); // This route is often used as the base admin URL
     $routes->get('account', 'AdminController::adminaccount', ['as' => 'admin_account']);

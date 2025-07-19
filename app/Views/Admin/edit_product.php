@@ -1,63 +1,122 @@
-<?= $this->extend('Layout/master') ?>
-
-<?= $this->section('title') ?><?= esc($title) ?><?= $this->endSection() ?>
-
-<?= $this->section('styles') ?>
-    <link rel="stylesheet" href="<?= base_url('public/assets/css/main.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('public/assets/css/admin.css') ?>">
-<?= $this->endSection() ?>
+<?= $this->extend('layouts/admin_master') ?>
 
 <?= $this->section('content') ?>
-    <div class="container admin-dashboard-page">
-        <div class="admin-header-nav mb-4 bg-white py-3 shadow-sm rounded-bottom">
-            <div class="container d-flex justify-content-center">
-                <ul class="nav nav-pills">
-                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_dashboard') ?>">HOME</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="<?= url_to('admin_products') ?>">PRODUCTS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_orders') ?>">ORDERS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_sales_report') ?>">SALES REPORT</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= url_to('admin_account') ?>">ADMIN ACCOUNT</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <h2>Edit Product</h2>
-
-        <?php if (isset($validation)): ?>
-            <div class="alert alert-danger" role="alert">
-                <?= $validation->listErrors() ?>
-            </div>
-        <?php endif; ?>
-        <?php if (session()->getFlashdata('error')): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?= session()->getFlashdata('error') ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
-
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <?= form_open('/admin/edit-product/' . esc($product['id'])) ?>
-                <div class="mb-3">
-                    <label for="name" class="form-label">Product Name</label>
-                    <input type="text" class="form-control" id="name" name="name" value="<?= esc($product['name']) ?>" required>
-                </div>
-                <div class="mb-3">
-                    <label for="price" class="form-label">Price</label>
-                    <input type="number" step="0.01" class="form-control" id="price" name="price" value="<?= esc($product['price']) ?>" required>
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control" id="description" name="description" rows="3"><?= esc($product['description']) ?></textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="stock" class="form-label">Stock</label>
-                    <input type="number" class="form-control" id="stock" name="stock" value="<?= esc($product['stock']) ?>" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Update Product</button>
-                <a href="<?= url_to('admin_products') ?>" class="btn btn-secondary">Cancel</a>
-                <?= form_close() ?>
-            </div>
-        </div>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Edit Product</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="<?= url_to('admin_dashboard') ?>">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?= url_to('products') ?>">Products</a></li>
+                        <li class="breadcrumb-item active">Edit Product</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
     </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Product Details</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <?= form_open_multipart(url_to('saveProduct')) ?>
+                        <div class="card-body">
+                            <?php if (session()->getFlashdata('errors')): ?>
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <ul class="mb-0">
+                                        <?php foreach (session()->getFlashdata('errors') as $error): ?>
+                                            <li><?= esc($error) ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            <?php endif; ?>
+
+                            <input type="hidden" name="id" value="<?= esc($product['id']) ?>">
+
+                            <div class="form-group">
+                                <label for="name">Product Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="<?= old('name', $product['name']) ?>" placeholder="Enter product name">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter product description"><?= old('description', $product['description']) ?></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="price">Price</label>
+                                <input type="number" class="form-control" id="price" name="price" value="<?= old('price', $product['price']) ?>" step="0.01" placeholder="Enter price">
+                            </div>
+                            <div class="form-group">
+                                <label for="original_price">Original Price (Optional)</label>
+                                <input type="number" class="form-control" id="original_price" name="original_price" value="<?= old('original_price', $product['original_price']) ?>" step="0.01" placeholder="Enter original price">
+                            </div>
+                            <div class="form-group">
+                                <label for="stock">Stock Quantity</label>
+                                <input type="number" class="form-control" id="stock" name="stock" value="<?= old('stock', $product['stock']) ?>" placeholder="Enter stock quantity">
+                            </div>
+                            <div class="form-group">
+                                <label for="category_id">Category</label>
+                                <select class="form-control" id="category_id" name="category_id">
+                                    <option value="">Select a Category</option>
+                                    <?php foreach ($categories as $category): ?>
+                                        <option value="<?= esc($category['id']) ?>" <?= (old('category_id', $product['category_id']) == $category['id']) ? 'selected' : '' ?>>
+                                            <?= esc($category['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_image">Product Image</label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="product_image" name="product_image">
+                                        <label class="custom-file-label" for="product_image">Choose file</label>
+                                    </div>
+                                </div>
+                                <?php if ($product['image']): ?>
+                                    <small class="form-text text-muted mt-2">Current Image:</small>
+                                    <img src="<?= base_url($product['image']) ?>" alt="Current Product Image" class="img-thumbnail mt-2" style="max-width: 150px; border-radius: 8px;">
+                                <?php endif; ?>
+                                <?php if (session('errors.product_image')) : ?>
+                                    <div class="text-danger text-sm mt-1"><?= session('errors.product_image') ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="form-group">
+                                <label for="colors">Colors (comma-separated)</label>
+                                <input type="text" class="form-control" id="colors" name="colors" value="<?= old('colors', is_array($product['colors']) ? implode(', ', $product['colors']) : $product['colors']) ?>" placeholder="e.g., Red, Blue, Green">
+                            </div>
+                            <div class="form-group">
+                                <label for="sizes">Sizes (comma-separated)</label>
+                                <input type="text" class="form-control" id="sizes" name="sizes" value="<?= old('sizes', is_array($product['sizes']) ? implode(', ', $product['sizes']) : $product['sizes']) ?>" placeholder="e.g., S, M, L, XL">
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Update Product</button>
+                        </div>
+                        <?= form_close() ?>
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
 <?= $this->endSection() ?>

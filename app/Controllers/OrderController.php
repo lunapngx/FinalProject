@@ -14,7 +14,7 @@ class OrderController extends BaseController
         $orderModel = new OrderModel();
         $userId = session()->get('user_id');
 
-        $data['orders'] = $orderModel->where('user_id', $userId)->findAll();
+        $data['orders'] = $orderModel->getAllOrders($userId);
 
         return view('Account/orders', $data);
     }
