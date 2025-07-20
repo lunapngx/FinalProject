@@ -31,7 +31,7 @@ class AdminController extends BaseController
         if (session()->get('isLoggedIn') !== true || session()->get('role') !== 'admin') {
             // If the user is not an admin or not logged in, redirect to the login page.
             session()->setFlashdata('error', 'You do not have permission to access that page.');
-            service('response')->redirect('/login')->send();
+            service('response')->redirect('/login')->send(); // Changed this to a full URL redirect for unauthenticated access
             exit; // Stop script execution
         }
 
@@ -50,15 +50,40 @@ class AdminController extends BaseController
      */
     public function dashboard()
     {
+        // --- Dashboard Statistics for Info Cards ---
+
+        // 1. Total Sales: Sum of all completed order amounts
+        //    Adjust 'total_amount' and 'status' based on your orders table
+        $totalSales = $this->orderModel->selectSum('total_amount')
+            ->where('status', 'completed') // Example: only completed orders
+            ->first()->total_amount ?? 0;
+
+        // 2. Weekly Orders: Count of orders placed in the last 7 days
+        //    Ensure your 'created_at' column is a datetime field
+        $weeklyOrders = $this->orderModel->where('created_at >=', date('Y-m-d H:i:s', strtotime('-7 days')))
+            ->countAllResults();
+
+        // 3. Total Customers: Count of all users with 'user' role
+        $totalCustomers = $this->userModel->where('role', 'user')->countAllResults();
+
+        // 4. Total Products: Count of all products
+        $totalProducts = $this->productModel->countAllResults();
+
+        // --- Fetch Products for Display Section on Dashboard ---
+        // Fetch a few products to show in the bottom section, matching the image (e.g., 2 products)
+        // You might want to order them by 'created_at' DESC for the latest products or by popularity
+        $productsToDisplay = $this->productModel->orderBy('created_at', 'DESC')->findAll(2);
+
         $data = [
-            'title'          => 'Admin Dashboard',
-            'total_products' => $this->productModel->countAllResults(),
-            'total_orders'   => $this->orderModel->countAllResults(),
-            // It's good practice to count only non-admin users
-            'total_users'    => $this->userModel->where('role', 'user')->countAllResults(),
+            'title'           => 'Admin Dashboard',
+            'total_sales'     => $totalSales,
+            'weekly_orders'   => $weeklyOrders,
+            'total_customers' => $totalCustomers, // Renamed for clarity in view
+            'total_products'  => $totalProducts,
+            'products'        => $productsToDisplay, // Pass the products to the view
         ];
 
-        return view('Admin/dashboard', $data);
+        return view('Admin/admin_dashboard', $data); // Changed view name to admin_dashboard for consistency
     }
 
     /**
@@ -120,6 +145,7 @@ class AdminController extends BaseController
             // If validation fails, redirect back with input and errors
             $id = $this->request->getPost('id');
             if ($id) {
+                // For edit product form validation errors, pass product_id back correctly
                 return redirect()->back()->withInput()->with('errors', $this->validator->getErrors())->with('product_id', $id);
             }
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
@@ -141,16 +167,20 @@ class AdminController extends BaseController
         $imageFile = $this->request->getFile('product_image');
         if ($imageFile && $imageFile->isValid() && ! $imageFile->hasMoved()) {
             $newName = $imageFile->getRandomName();
-            $imageFile->move(FCPATH . 'uploads/products', $newName); // Move to public/uploads/products
+            // Ensure the directory exists
+            $uploadPath = FCPATH . 'uploads/products';
+            if (! is_dir($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+            $imageFile->move($uploadPath, $newName); // Move to public/uploads/products
             $productData['image'] = 'uploads/products/' . $newName; // Store relative path
         } else if ($this->request->getPost('id')) {
             // If editing and no new image, retain old image path
             $existingProduct = $this->productModel->find($this->request->getPost('id'));
-            $productData['image'] = $existingProduct['image'];
+            $productData['image'] = $existingProduct['image'] ?? null; // Use null if image doesn't exist
         } else {
-            // For new products, if no image is uploaded, set a default or handle as error.
-            // For now, let's assume it's handled by validation 'uploaded' rule for new products.
-            $productData['image'] = null; // Or a path to a default image
+            // For new products, if no image is uploaded, set to null (validation will handle 'required')
+            $productData['image'] = null;
         }
 
         // Determine if it's an insert or update
@@ -180,6 +210,14 @@ class AdminController extends BaseController
         if (! $product) {
             session()->setFlashdata('error', 'Product not found.');
             return redirect()->to(url_to('admin_products'));
+        }
+
+        // Ensure colors and sizes are decoded from JSON for the form
+        if (! empty($product['colors'])) {
+            $product['colors'] = implode(', ', json_decode($product['colors'], true));
+        }
+        if (! empty($product['sizes'])) {
+            $product['sizes'] = implode(', ', json_decode($product['sizes'], true));
         }
 
         $data = [

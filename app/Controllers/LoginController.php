@@ -19,7 +19,7 @@ class LoginController extends ShieldLoginController
 
             // Check for admin group first
             if ($user->inGroup('admin')) {
-                return redirect()->route('Admin/admin_dashboard')->withCookies();
+                return redirect()->route('admin_dashboard')->withCookies(); // Changed this line
             }
 
             // Then check for user group
