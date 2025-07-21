@@ -54,11 +54,11 @@ class AuthGroups extends ShieldAuthGroups
             'description' => 'Site programmers.',
         ],
         'user' => [
-            'title'       => 'wishlist',
+            'title'       => 'User',
             'description' => 'General users of the site. Often customers.',
         ],
         'beta' => [
-            'title'       => 'Beta wishlist',
+            'title'       => 'Beta User',
             'description' => 'Has access to beta-level features.',
         ],
     ];
@@ -72,13 +72,45 @@ class AuthGroups extends ShieldAuthGroups
      * If a permission is not listed here it cannot be used.
      */
     public array $permissions = [
+        // Existing admin/user management permissions
         'admin.access'        => 'Can access the sites admin area',
         'admin.settings'      => 'Can access the main site settings',
-        'users.manage-admins' => 'Can manage other admins',
+        'users.manage-admins' => 'Can manage other admins', // For superadmin
         'users.create'        => 'Can create new non-admin users',
         'users.edit'          => 'Can edit existing non-admin users',
         'users.delete'        => 'Can delete existing non-admin users',
         'beta.access'         => 'Can access beta-level features',
+
+        // --- NEW SHOPPING SYSTEM PERMISSIONS ---
+
+        // Product Management
+        'products.view'       => 'Can view all products', // For customers to browse
+        'products.create'     => 'Can add new products',
+        'products.edit'       => 'Can edit existing products',
+        'products.delete'     => 'Can delete products',
+        'products.manage'     => 'Can manage product inventory (view/update stock)', // General management
+
+        // Category Management
+        'categories.view'     => 'Can view all categories', // For customers to browse
+        'categories.create'   => 'Can add new categories',
+        'categories.edit'     => 'Can edit existing categories',
+        'categories.delete'   => 'Can delete categories',
+
+        // Order Management
+        'orders.view_all'     => 'Can view all orders in the system', // For admins
+        'orders.view_own'     => 'Can view their own orders',         // For customers
+        'orders.create'       => 'Can place new orders',               // For customers
+        'orders.update_status'=> 'Can change order statuses',          // For admins
+        'orders.cancel_any'   => 'Can cancel any order',               // For admins
+        'orders.cancel_own'   => 'Can cancel their own order',         // For customers
+
+        // User Profile & Addresses (for customers)
+        'profile.manage'      => 'Can update their own user profile details (name, phone)',
+        'addresses.manage_own'=> 'Can add, edit, delete their own addresses',
+
+        // Payments Management
+        'payments.view_all'   => 'Can view all payment records',
+        'payments.refund'     => 'Can issue refunds',
     ];
 
     /**
@@ -94,6 +126,8 @@ class AuthGroups extends ShieldAuthGroups
             'admin.*',
             'users.*',
             'beta.*',
+            // Superadmin automatically gets all newly added permissions if they are under 'products.*', 'categories.*' etc.
+            // You might consider adding 'shop.*' if you group them all under a main shop context.
         ],
         'admin' => [
             'admin.access',
@@ -101,6 +135,19 @@ class AuthGroups extends ShieldAuthGroups
             'users.edit',
             'users.delete',
             'beta.access',
+            // --- NEW ADMIN PERMISSIONS ---
+            'products.create',
+            'products.edit',
+            'products.delete',
+            'products.manage',
+            'categories.create',
+            'categories.edit',
+            'categories.delete',
+            'orders.view_all',
+            'orders.update_status',
+            'orders.cancel_any',
+            'payments.view_all',
+            'payments.refund',
         ],
         'developer' => [
             'admin.access',
@@ -108,8 +155,21 @@ class AuthGroups extends ShieldAuthGroups
             'users.create',
             'users.edit',
             'beta.access',
+            // Developers might also get access to product/category/order viewing for debugging
+            'products.view',
+            'categories.view',
+            'orders.view_all',
+            'payments.view_all',
         ],
-        'user' => [],
+        'user' => [ // <-- Assign permissions for your regular customers here
+            'products.view',
+            'categories.view',
+            'orders.create',
+            'orders.view_own',
+            'orders.cancel_own',
+            'profile.manage',
+            'addresses.manage_own',
+        ],
         'beta' => [
             'beta.access',
         ],

@@ -14,8 +14,8 @@ class AddFullnameAndRoleToUsersTable extends Migration
                 'fullname' => [
                     'type'       => 'VARCHAR',
                     'constraint' => '255',
-                    'null'       => true, // Or false, depending on your requirement
-                    'after'      => 'username', // Position it after username
+                    'null'       => true,
+                    'after'      => 'username', // Assuming 'username' exists in your users table
                 ],
             ]);
         }
@@ -26,8 +26,12 @@ class AddFullnameAndRoleToUsersTable extends Migration
                 'role' => [
                     'type'       => 'VARCHAR',
                     'constraint' => '50',
-                    'default'    => 'user', // Default role for new registrations
-                    'after'      => 'password_hash', // Position it after password_hash
+                    'default'    => 'user',
+                    // CHANGE THIS LINE: Use a column that *actually exists* in the 'users' table.
+                    // 'username' is usually safe, or 'id'.
+                    'after'      => 'fullname', // Position it after 'fullname' (if 'fullname' is added first)
+                    // OR 'after' => 'username',
+                    // OR 'after' => 'id', (very safe)
                 ],
             ]);
         }

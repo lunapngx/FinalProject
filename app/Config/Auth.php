@@ -46,9 +46,9 @@ class Auth extends ShieldAuth
      * --------------------------------------------------------------------
      */
     public array $views = [
-        'login'                       => 'login',
-        'register'                    => 'register',
-        'layout'                      => 'layouts/layout',
+        'login'                       => '\CodeIgniter\Shield\Views\login',
+        'register'                    => '\CodeIgniter\Shield\Views\register',
+        'layout'                      => '\CodeIgniter\Shield\Views\layout',
         'action_email_2fa'            => '\CodeIgniter\Shield\Views\email_2fa_show',
         'action_email_2fa_verify'     => '\CodeIgniter\Shield\Views\email_2fa_verify',
         'action_email_2fa_email'      => '\CodeIgniter\Shield\Views\Email\email_2fa_email',
@@ -75,7 +75,7 @@ class Auth extends ShieldAuth
      */
     public array $redirects = [
         'register'          => '/',
-        'login'             => 'login', // Changed to 'login'
+        'login'             => '/',
         'logout'            => 'login',
         'force_reset'       => '/',
         'permission_denied' => '/',
@@ -94,6 +94,11 @@ class Auth extends ShieldAuth
      * Available actions with Shield:
      * - register: \CodeIgniter\Shield\Authentication\Actions\EmailActivator::class
      * - login:    \CodeIgniter\Shield\Authentication\Actions\Email2FA::class
+     *
+     * Custom Actions and Requirements:
+     *
+     * - All actions must implement \CodeIgniter\Shield\Authentication\Actions\ActionInterface.
+     * - Custom actions for "register" must have a class name that ends with the suffix "Activator" (e.g., `CustomSmsActivator`) ensure proper functionality.
      *
      * @var array<string, class-string<ActionInterface>|null>
      */
@@ -160,7 +165,7 @@ class Auth extends ShieldAuth
      * --------------------------------------------------------------------
      * If true, will always update the `last_active` datetime for the
      * logged-in user on every page request.
-     * This feature only works when session/tokens filter is active.
+     * This feature only works when session/tokens/hmac/chain/jwt filter is active.
      *
      * @see https://codeigniter4.github.io/shield/quick_start_guide/using_session_auth/#protecting-pages for set filters.
      */
@@ -291,7 +296,7 @@ class Auth extends ShieldAuth
      * being used in passwords. The email and username fields are always
      * considered by the validator. Do not enter those field names here.
      *
-     * An extended wishlist Entity might include other personal info such as
+     * An extended User Entity might include other personal info such as
      * first and/or last names. $personalFields is where you can add
      * fields to be considered as "personal" by the NothingPersonalValidator.
      * For example:
@@ -386,8 +391,6 @@ class Auth extends ShieldAuth
      */
     public ?string $DBGroup = null;
 
-    // ... other code ...
-
     /**
      * --------------------------------------------------------------------
      * Customize Name of Shield Tables
@@ -409,22 +412,18 @@ class Auth extends ShieldAuth
      * @var array<string, string>
      */
     public array $tables = [
-        'users'                 => 'users',
-        'identities'            => 'auth_identities',
-        'logins'                => 'auth_logins',
-        'token_logins'          => 'auth_token_logins',
-        'remember_tokens'       => 'auth_remember_tokens',
-        'groups'                => 'auth_groups',
-        'permissions'           => 'auth_permissions',
-        'groups_users'          => 'auth_groups_users', // <--- This line must be here
-        'permissions_users'     => 'auth_permissions_users',
-        'throttler'             => 'throttler',
-        'sessions'              => 'ci_sessions',
+        'users'             => 'users',
+        'identities'        => 'auth_identities',
+        'logins'            => 'auth_logins',
+        'token_logins'      => 'auth_token_logins',
+        'remember_tokens'   => 'auth_remember_tokens',
+        'groups_users'      => 'auth_groups_users',
+        'permissions_users' => 'auth_permissions_users',
     ];
 
     /**
      * --------------------------------------------------------------------
-     * wishlist Provider
+     * User Provider
      * --------------------------------------------------------------------
      * The name of the class that handles user persistence.
      * By default, this is the included UserModel, which
@@ -512,23 +511,10 @@ class Auth extends ShieldAuth
      */
     protected function getUrl(string $url): string
     {
-        // To accommodate all url patterns
-        $final_url = '';
-
-        switch (true) {
-            case strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0: // URL begins with 'http' or 'https'. E.g. http://example.com
-                $final_url = $url;
-                break;
-
-            case route_to($url) !== false: // URL is a named-route
-                $final_url = rtrim(url_to($url), '/ ');
-                break;
-
-            default: // URL is a route (URI path)
-                $final_url = rtrim(site_url($url), '/ ');
-                break;
-        }
-
-        return $final_url;
+        return match (true) {
+            str_starts_with($url, 'http://') || str_starts_with($url, 'https://') => $url,
+            route_to($url) !== false                                              => rtrim(url_to($url), '/ '),
+            default                                                               => rtrim(site_url($url), '/ '),
+        };
     }
 }
