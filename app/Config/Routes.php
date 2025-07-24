@@ -12,7 +12,7 @@ $routes->set404Override();
 $routes->setAutoRoute(false); // Keep this false for better security and explicit routing
 
 // --- Public Routes ---
-$routes->get('/', 'Home::index');
+$routes->get('/', 'Home::index', ['as' => 'home_page']); // <<< Make sure this line is exactly like this
 $routes->get('/about', 'Home::about', ['as' => 'about']);
 
 // Product and category routes
